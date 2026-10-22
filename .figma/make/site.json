@@ -1,0 +1,10 @@
+{
+  "description": "This interactive developer tool helps teams understand repository architecture, decisions, and expertise, ensuring seamless knowledge transfer after team changes.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,0 +1,2650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Last Commit — they leave, their world of work stays. A design prototype for onboarding into a departed teammate's codebase.">
+</head>
+<body>
+<title>Last Commit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+
+/* Last Commit — design system
+   Grid: sidebar 240 + content (max 1440). 8px spacing scale: 8 / 16 / 24 / 32 / 48.
+   Type: 34 display · 20 section · 15 body · 13 meta. Inter throughout, handwriting only on John's whiteboard.
+   Color: white canvas, one ink, one grey. Pastels (mint / yellow / rose / blue / violet) carry meaning. */
+:root {
+  --ink: #141a21;
+  --ink-2: #3c4855;
+  --grey: #7a8594;
+  --grey-2: #a9b2bd;
+  --line: #eceff3;
+  --canvas: #ffffff;
+  --wash: #f6f8fa;
+  --mint: #2f9f6a; --mint-50: #eaf8f1; --mint-100: #d3f2e2;
+  --yellow: #f2b524; --yellow-50: #fff8e3; --yellow-100: #ffefc2;
+  --rose: #ef4f5f; --rose-50: #fff1f2; --rose-100: #ffdfe2;
+  --blue: #3c7be6; --blue-50: #eef4ff; --blue-100: #dae7ff;
+  --violet: #7b68d9; --violet-50: #f3f0ff; --violet-100: #e4ddff;
+  --r: 18px;
+  --shadow: 0 1px 2px rgba(20, 26, 33, .03), 0 12px 32px rgba(20, 26, 33, .05);
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hand: "Caveat", "Bradley Hand", "Segoe Print", cursive;
+  color-scheme: light;
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+}
+*, *::before, *::after { box-sizing: border-box; }
+@layer base {
+  body { margin: 0; min-width: 320px; background: var(--canvas); color: var(--ink); font-size: 15px; line-height: 1.5; }
+  h1, h2, h3, p { margin: 0; text-wrap: balance; }
+  ol, ul { margin: 0; padding: 0; list-style: none; }
+  button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; text-align: inherit; }
+  button:disabled { cursor: default; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  blockquote { margin: 0; }
+}
+:where(button, a, input, select, [role="button"]):focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; border-radius: 10px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.icon { flex: 0 0 auto; }
+
+/* tints */
+.tint--mint { background: var(--mint-50); color: var(--mint); }
+.tint--yellow { background: var(--yellow-50); color: #b07f0b; }
+.tint--rose { background: var(--rose-50); color: var(--rose); }
+.tint--blue { background: var(--blue-50); color: var(--blue); }
+.tint--violet { background: var(--violet-50); color: var(--violet); }
+
+/* logo */
+.logo { display: flex; align-items: center; gap: 16px; font-size: 40px; font-weight: 800; line-height: .95; letter-spacing: -.04em; color: var(--ink); }
+.logo--compact { gap: 6px; font-size: 22px; }
+.logo-mark { width: 52px; height: 76px; position: relative; display: block; flex: 0 0 auto; }
+.logo--compact .logo-mark { transform: scale(.58); transform-origin: left top; margin: 0 -20px -32px 0; }
+.logo-mark::before { content: ""; position: absolute; left: 24px; top: 10px; width: 3px; height: 58px; background: #151b21; transform: rotate(-6deg); border-radius: 3px; }
+.logo-mark::after { content: ""; position: absolute; left: 5px; top: 14px; width: 22px; height: 3px; background: #151b21; transform: rotate(-15deg); border-radius: 3px; }
+.logo-mark i { position: absolute; width: 25px; height: 25px; border: 3px solid #151b21; border-radius: 50%; z-index: 1; background: #ff5d63; }
+.logo-mark i:nth-child(1) { left: 27px; top: 0; }
+.logo-mark i:nth-child(2) { left: 20px; top: 25px; background: #ffd57e; }
+.logo-mark i:nth-child(3) { left: 22px; top: 51px; background: #67bf8b; }
+.logo-mark i:nth-child(4) { width: 15px; height: 15px; left: 0; top: 10px; background: #379965; border: 0; border-radius: 100% 0 100% 0; transform: rotate(-15deg); }
+
+/* avatars & photos */
+.avatar { position: relative; flex: 0 0 auto; border-radius: 50%; display: inline-grid; place-items: center; font-weight: 700; letter-spacing: -.02em; }
+.avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.hue-mint { background: var(--mint-100); color: #17694a; }
+.hue-blue { background: var(--blue-100); color: #2453a3; }
+.hue-violet { background: var(--violet-100); color: #5640b8; }
+.hue-rose { background: var(--rose-100); color: #b42335; }
+.hue-yellow { background: var(--yellow-100); color: #8a6209; }
+.presence { position: absolute; right: 0; bottom: 0; width: 28%; height: 28%; min-width: 9px; min-height: 9px; border-radius: 50%; border: 2px solid var(--canvas); background: var(--grey-2); }
+.presence--online { background: var(--mint); } .presence--away { background: var(--yellow); } .presence--you { display: none; }
+.photo-fallback { display: grid; place-items: center; width: 100%; height: 100%; background: linear-gradient(135deg, var(--mint-100), var(--blue-100)); }
+.photo-fallback b { font-size: clamp(28px, 6vw, 72px); font-weight: 800; color: #17694a; letter-spacing: -.04em; opacity: .8; }
+
+/* shared */
+.panel { background: var(--canvas); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; min-width: 0; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.panel-head h2, .panel > h2 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: center; gap: 10px; }
+.see { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--grey); }
+.see:hover { color: var(--ink); }
+.see--blue { color: var(--blue); }
+.sdot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; background: var(--grey-2); }
+.sdot--stable { background: var(--mint); } .sdot--needs-review { background: var(--yellow); } .sdot--high-risk { background: var(--rose); }
+.bot { width: 40px; height: 40px; border-radius: 50%; background: var(--ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: 0 0 auto; box-shadow: 0 0 0 4px var(--wash); }
+.bot i { width: 6px; height: 8px; border-radius: 3px; background: #7ff0bd; }
+.play { position: absolute; left: 20px; bottom: 20px; display: inline-flex; align-items: center; gap: 12px; padding: 8px 18px 8px 8px; border-radius: 999px; background: rgba(14, 19, 24, .82); color: #fff; font-size: 14px; font-weight: 500; backdrop-filter: blur(8px); }
+.play b { width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; }
+.title { display: grid; gap: 8px; }
+.title h1 { font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+.title p { color: var(--grey); font-size: 16px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--mint); }
+.ask-bar { display: flex; align-items: center; gap: 8px; height: 56px; padding: 0 8px 0 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--canvas); box-shadow: var(--shadow); }
+.ask-bar input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; color: var(--ink); }
+.ask-bar input::placeholder { color: var(--grey-2); }
+.ask-bar button { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--mint); color: #fff; }
+.ask-bar button:disabled { background: var(--line); color: var(--grey-2); }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 14px; z-index: 60; }
+
+/* welcome — fits one screen: brand + card on the left, photo panel bleeding off the right edge */
+.welcome { position: relative; height: 100vh; height: 100dvh; min-height: 680px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 48%) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 32px; padding-block: clamp(28px, 5.5vh, 60px); padding-left: max(16px, env(safe-area-inset-left, 0px), 4.4vw); padding-right: max(16px, env(safe-area-inset-right, 0px), 4.4vw); background: radial-gradient(ellipse at 85% 0%, #f1f2f0 0%, rgba(241, 242, 240, 0) 55%), linear-gradient(180deg, #fbfbfa, #ffffff); }
+.welcome-top { grid-column: 1; position: relative; z-index: 2; }
+.brand { display: flex; align-items: flex-start; gap: 18px; }
+.brand-word { display: block; font-size: clamp(28px, min(3vw, 4.6vh), 44px); font-weight: 800; line-height: .98; letter-spacing: -.04em; color: var(--ink); margin-top: 8px; }
+.brand p { margin-top: 10px; font-size: clamp(14px, min(1.25vw, 2vh), 18px); color: var(--grey); }
+.welcome-photo { position: relative; grid-column: 2; grid-row: 2; align-self: center; justify-self: end; margin-top: 2vh; width: min(100%, 640px); max-height: 66vh; aspect-ratio: 5 / 6; border-radius: 28px; overflow: hidden; background: linear-gradient(135deg, #eef3ef, #f5f6f8); box-shadow: 0 30px 70px rgba(20, 26, 33, .08); }
+.welcome-photo img, .welcome-photo .photo-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% 25%; }
+.welcome-photo .photo-fallback { background: radial-gradient(circle at 55% 40%, #e2efe7, #f4f5f7 65%); }
+.welcome-photo::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: none; }
+.wall-note { position: absolute; top: 6%; right: 6%; z-index: 1; padding: 14px 18px 16px; background: #f3ead9; box-shadow: 0 10px 24px rgba(60, 48, 30, .12); transform: rotate(-4deg); font-family: var(--hand); font-size: clamp(17px, 1.5vw, 23px); line-height: 1.12; color: #3a3530; }
+.wall-note em { display: block; margin-top: 6px; font-style: normal; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 6px; }
+.welcome-card { grid-column: 1; position: relative; z-index: 2; align-self: center; margin-top: 2vh; padding: clamp(24px, 5vh, 64px) clamp(28px, 4.4vw, 64px); border-radius: 28px; border: 1px solid #eceef0; background: rgba(255, 255, 255, .9); box-shadow: 0 30px 70px rgba(20, 26, 33, .05); display: flex; flex-direction: column; gap: clamp(14px, 3vh, 34px); }
+.welcome-card h1 { font-size: clamp(36px, min(5vw, 7.4vh), 76px); font-weight: 800; letter-spacing: -.045em; line-height: 1.04; }
+.welcome-card h1 em { font-style: normal; color: #1f4d39; }
+.wave { display: inline-block; font-size: .8em; transform-origin: 70% 80%; animation: wave 2.4s ease-in-out 1s 2; }
+@keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(14deg); } 20%, 40% { transform: rotate(-8deg); } }
+.welcome-card > p { font-size: clamp(16px, min(1.6vw, 2.5vh), 24px); line-height: 1.5; color: var(--grey); max-width: 34ch; margin-top: -6px; }
+.nowrap { white-space: nowrap; }
+.shortcuts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.shortcuts button { display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.4vh, 14px); white-space: nowrap; font-size: clamp(13px, min(1.15vw, 1.9vh), 17px); color: var(--ink-2); transition: transform .2s; }
+.shortcuts button:hover { transform: translateY(-3px); color: var(--ink); }
+.sc-icon { width: clamp(52px, min(5.4vw, 8.4vh), 82px); aspect-ratio: 1; border-radius: 20px; display: grid; place-items: center; }
+.sc-icon.tint--blue { color: #3a4f7a; } .sc-icon.tint--violet { color: #4b3a8f; } .sc-icon.tint--rose { color: #8f3a45; } .sc-icon.tint--yellow { color: #6b5212; } .sc-icon.tint--mint { color: #1f4d39; }
+.enter { height: clamp(56px, 8vh, 88px); border-radius: 18px; background: #18202a; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 44px 0 46px; font-size: clamp(17px, min(1.7vw, 2.6vh), 24px); font-weight: 500; transition: background .2s; }
+.enter:hover { background: #0a0e12; }
+@media (max-width: 900px) {
+  .welcome { height: auto; min-height: 100vh; overflow: visible; grid-template-columns: minmax(0, 1fr); }
+  .welcome-photo { position: absolute; left: 0; right: 0; top: 0; width: 100%; max-height: none; aspect-ratio: auto; margin: 0; height: 44vh; border-radius: 0; box-shadow: none; }
+  .welcome-photo::after { content: ""; position: absolute; inset: 0; }
+  .welcome-photo::after { background: linear-gradient(0deg, #ffffff 0%, rgba(255, 255, 255, 0) 45%); }
+  .wall-note { display: none; }
+  .welcome-card { margin-top: 26vh; align-self: start; }
+  .brand { background: rgba(255, 255, 255, .85); padding: 10px 16px 10px 10px; border-radius: 18px; align-self: start; width: fit-content; }
+}
+@media (max-width: 520px) {
+  .shortcuts { gap: 6px; }
+  .sc-icon { width: 54px; border-radius: 16px; }
+  .shortcuts button { font-size: 12px; gap: 8px; }
+  .enter { padding: 0 24px; }
+  .brand-word { font-size: 28px; }
+  .brand p { display: none; }
+}
+
+/* shell */
+.shell { min-height: 100vh; display: grid; grid-template-columns: 240px minmax(0, 1fr); }
+.side { position: sticky; top: 0; height: 100vh; padding: 32px 20px; border-right: 1px solid var(--line); background: var(--canvas); z-index: 10; }
+.side .logo { margin-left: 12px; }
+.side nav { margin-top: 56px; display: grid; gap: 8px; }
+.side nav button { height: 48px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-radius: 14px; font-size: 16px; color: var(--ink-2); }
+.side nav button:hover { background: var(--wash); }
+.side nav button.active { background: var(--mint-50); color: #176d4b; font-weight: 600; }
+.main { min-width: 0; }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-left: max(24px, env(safe-area-inset-left, 0px), 3vw); padding-right: max(24px, env(safe-area-inset-right, 0px), 3vw); background: rgba(255, 255, 255, .92); backdrop-filter: blur(12px); }
+.search { flex: 0 1 520px; height: 48px; display: flex; align-items: center; gap: 12px; padding: 0 18px; border-radius: 14px; background: var(--wash); color: var(--grey); min-width: 0; }
+.search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; color: var(--ink); }
+.search input::placeholder { color: var(--grey-2); }
+.me { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 15px; padding: 4px; border-radius: 999px; }
+.screen { max-width: 1440px; margin: 0 auto; padding-block: 16px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px), 3vw); padding-right: max(16px, env(safe-area-inset-right, 0px), 3vw); display: flex; flex-direction: column; gap: 32px; }
+.screen.narrow { max-width: 1200px; }
+
+/* home */
+.home { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr); gap: 32px; align-items: start; }
+.home-main { display: flex; flex-direction: column; gap: 24px; }
+.hello { display: grid; gap: 8px; }
+.hello h1 { font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+.hello p { color: var(--grey); font-size: 16px; }
+.hero { position: relative; display: block; width: 100%; aspect-ratio: 16 / 8.2; max-width: 100%; border-radius: 22px; overflow: hidden; background: var(--wash); box-shadow: var(--shadow); }
+.hero-img, .hero .photo-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; transition: transform .6s ease; }
+.hero:hover .hero-img { transform: scale(1.02); }
+.hero-note { position: absolute; right: 6%; top: 12%; font-family: var(--hand); font-size: clamp(18px, 2vw, 26px); line-height: 1.1; color: #3a4048; transform: rotate(-3deg); text-align: left; }
+.hero-note em { display: block; margin-top: 8px; font-style: normal; text-align: right; }
+.prompt { display: flex; flex-direction: column; gap: 16px; }
+.prompt-q { display: flex; align-items: center; gap: 16px; }
+.prompt-q p { background: var(--mint-50); padding: 12px 18px; border-radius: 4px 16px 16px 16px; font-size: 15px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 56px; }
+.chips button { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; color: var(--ink-2); background: var(--canvas); transition: border-color .2s, background .2s; }
+.chips button:hover { border-color: #b9e3cc; background: var(--mint-50); }
+.home-side { display: flex; flex-direction: column; gap: 24px; padding-top: 4px; }
+.repo-list li + li { border-top: 1px solid var(--line); }
+.repo-list button { width: 100%; display: flex; align-items: center; gap: 16px; padding: 14px 0; }
+.repo-list button > span { flex: 1; display: grid; min-width: 0; }
+.repo-list strong { font-size: 15px; font-weight: 600; }
+.repo-list small { font-size: 13px; color: var(--grey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.repo-list button:hover strong { color: #176d4b; }
+.bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
+.bars i { width: 4px; border-radius: 2px; background: var(--blue); }
+.bars i:nth-child(1) { height: 8px; } .bars i:nth-child(2) { height: 16px; } .bars i:nth-child(3) { height: 11px; }
+.health-bar { display: flex; height: 12px; border-radius: 99px; overflow: hidden; gap: 3px; margin-bottom: 16px; }
+.health-bar i { border-radius: 99px; }
+.hb--stable { background: var(--mint); opacity: .8; } .hb--needs-review { background: var(--yellow); } .hb--high-risk { background: var(--rose); } .hb--unknown { background: var(--grey-2); }
+.health-list li { display: grid; grid-template-columns: 10px 1fr auto 40px; align-items: center; gap: 12px; padding: 8px 0; font-size: 14px; }
+.health-list small { color: var(--grey); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* repository */
+.repo-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.gh { color: var(--ink); }
+.repo-id { flex: 1; min-width: 240px; display: grid; gap: 2px; }
+.repo-name { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.repo-name h1 { font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+.repo-id p { color: var(--grey); font-size: 17px; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; }
+.pill i { width: 12px; height: 12px; border-radius: 4px; }
+.pill--needs-review { background: var(--yellow-50); color: #6b4d06; } .pill--needs-review i { background: var(--yellow); }
+.pill--high-risk { background: var(--rose-50); color: #9b1c2c; } .pill--high-risk i { background: var(--rose); }
+.pill--stable { background: var(--mint-50); color: #17694a; } .pill--stable i { background: var(--mint); }
+.ask-people { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--grey); margin-right: 8px; }
+.ask-people span { margin-right: 6px; }
+.ask-people button { margin-left: -8px; border-radius: 50%; box-shadow: 0 0 0 3px var(--canvas); transition: transform .2s; }
+.ask-people button:first-of-type { margin-left: 0; }
+.ask-people button:hover { transform: translateY(-2px); }
+.branch { position: relative; display: inline-flex; align-items: center; height: 48px; border: 1px solid var(--line); border-radius: 14px; padding: 0 16px; gap: 24px; }
+.branch select { appearance: none; border: 0; background: transparent; font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); outline: none; padding-right: 8px; max-width: 160px; }
+.branch .icon { pointer-events: none; }
+.gh-btn { height: 48px; display: inline-flex; align-items: center; gap: 12px; padding: 0 22px; border-radius: 14px; background: var(--ink); color: #fff; font-weight: 500; }
+.gh-btn:hover { background: #0a0e12; }
+.tabs { display: flex; gap: 40px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; margin-top: -8px; }
+.tabs button { padding: 12px 4px 14px; font-size: 15px; color: var(--grey); border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tabs button:hover { color: var(--ink); }
+.tabs button.active { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+.repo-top { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr); gap: 24px; align-items: stretch; }
+.arch-panel { position: relative; padding: 16px; display: flex; flex-direction: column; background: linear-gradient(180deg, #fbfdfc, #ffffff); }
+.legend { position: absolute; top: 20px; right: 24px; display: grid; gap: 6px; font-size: 12px; color: var(--grey); z-index: 1; }
+.legend span { display: flex; align-items: center; gap: 10px; }
+.lg { width: 26px; border-top: 2px dashed; }
+.lg--request { border-color: #3fbf86; } .lg--data { border-color: var(--blue); } .lg--async { border-color: var(--yellow); }
+.lens { position: absolute; top: 18px; left: 18px; z-index: 1; display: inline-flex; gap: 2px; padding: 4px; border-radius: 12px; background: var(--wash); }
+.lens button { padding: 6px 12px; border-radius: 9px; font-size: 13px; color: var(--grey); transition: background .2s, color .2s; }
+.lens button:hover { color: var(--ink); }
+.lens button.active { background: var(--canvas); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(20, 26, 33, .08); }
+.arch { width: 100%; height: auto; display: block; flex: 1; }
+.arch-hint { text-align: center; font-size: 12px; color: var(--grey-2); padding-bottom: 4px; }
+.flow { fill: none; stroke-width: 2; stroke-dasharray: 6 6; stroke-linecap: round; animation: dash 1.6s linear infinite; }
+.flow--request { stroke: #3fbf86; } .flow--data { stroke: var(--blue); } .flow--async { stroke: var(--yellow); }
+.mk { fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.mk--request { stroke: #3fbf86; } .mk--data { stroke: var(--blue); } .mk--async { stroke: var(--yellow); }
+@keyframes dash { to { stroke-dashoffset: -24; } }
+.node { cursor: pointer; outline: none; }
+.node-shadow { fill: rgba(20, 40, 32, .08); }
+.cube-face { stroke-width: 7; stroke-linejoin: round; transition: transform .3s; }
+.node:hover > g:first-of-type, .node.is-active { filter: drop-shadow(0 10px 18px rgba(47, 159, 106, .22)); }
+.glyph { fill: none; stroke: rgba(255, 255, 255, .95); stroke-width: 2.2; stroke-linejoin: round; }
+.glyph--fill { fill: rgba(255, 255, 255, .95); }
+.badge { stroke: var(--canvas); stroke-width: 3; }
+.badge--high-risk { fill: var(--rose); } .badge--needs-review { fill: var(--yellow); }
+.badge-t { fill: #fff; font-size: 13px; font-weight: 800; }
+.n-name { font-size: 18px; font-weight: 700; fill: var(--ink); }
+.n-sub { font-size: 14.5px; fill: var(--grey); }
+.pill-bg { fill: var(--mint-50); stroke: #cdeedc; }
+.node.is-active .n-name { fill: #176d4b; }
+.node.is-active .node-shadow { fill: rgba(47, 159, 106, .2); }
+.repo-side { display: flex; flex-direction: column; gap: 24px; }
+.walk { padding: 20px; display: flex; flex-direction: column; }
+.cam { width: 28px; height: 28px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; }
+.time { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: var(--wash); font-size: 13px; color: var(--ink-2); }
+.walk-media { position: relative; display: grid; grid-template-columns: 1fr; height: 220px; border-radius: 14px; overflow: hidden; background: var(--wash); }
+.walk-photo { position: relative; overflow: hidden; }
+.walk-photo img, .walk-photo .photo-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.board { background: #fbfbf9; padding: 20px 24px 20px 84px; font-family: var(--hand); font-size: 20px; line-height: 1.15; color: #333a42; display: flex; flex-direction: column; gap: 6px; overflow: hidden; text-align: left; background-image: radial-gradient(circle at 1px 1px, #e9ecef 1px, transparent 0); background-size: 18px 18px; }
+.board b { font-weight: 500; font-size: 26px; text-align: left; text-transform: capitalize; }
+.board-flow { display: flex; flex-wrap: wrap; gap: 2px; font-size: 19px; }
+.board-flow em { font-style: normal; border: 1.5px solid #3b424a; border-radius: 4px; padding: 0 4px; margin: 0 2px; }
+.board ol { list-style: decimal; padding-left: 18px; }
+.walk-play { position: absolute; left: 20px; top: 50%; margin-top: -22px; width: 44px; height: 44px; border-radius: 50%; background: rgba(14, 19, 24, .85); color: #fff; display: grid; place-items: center; }
+.takeaways { background: var(--yellow-50); border-color: #f8e8b8; flex: 1; }
+.takeaways h2 { margin-bottom: 16px; }
+.sun { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, #ffd23d 45%, #ffe9a1 46%, #ffe9a1 60%, transparent 62%); }
+.takeaways ul { display: grid; gap: 12px; }
+.takeaways li { position: relative; padding-left: 26px; font-size: 14.5px; color: var(--ink-2); line-height: 1.45; }
+.takeaways li::before { content: ""; position: absolute; left: 2px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--yellow); }
+.repo-bottom { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.changes li { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 14px; padding: 10px 0; font-size: 14.5px; color: var(--ink-2); }
+.changes small { color: var(--grey); font-size: 13px; font-variant-numeric: tabular-nums; }
+.ci { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #fff; background: var(--grey-2); }
+.ci--risk { background: var(--rose); } .ci--review { background: var(--yellow); } .ci--ok { background: var(--mint); } .ci--minor { background: #c3cad3; }
+.snippet { border-color: #cfe0ff; display: flex; flex-direction: column; gap: 16px; background: linear-gradient(180deg, #fafcff, #ffffff); }
+.me-q { display: flex; align-items: center; gap: 14px; }
+.me-q p { background: var(--wash); padding: 10px 16px; border-radius: 4px 14px 14px 14px; font-size: 15px; }
+.bot-a { display: flex; align-items: flex-start; gap: 14px; }
+.bot-a p { background: var(--mint-50); padding: 14px 18px; border-radius: 4px 16px 16px 16px; font-size: 15px; line-height: 1.55; }
+.src { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 54px; }
+.src button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; border: 1px solid #dbe6fb; background: var(--blue-50); color: #2453a3; font-size: 13px; }
+.src button:hover { border-color: var(--blue); }
+.cards3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.decision { display: flex; flex-direction: column; gap: 12px; }
+.decision-icon { width: 44px; height: 44px; border-radius: 14px; background: var(--yellow-50); color: #b07f0b; display: grid; place-items: center; }
+.decision h2 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.decision p { color: var(--ink-2); font-size: 15px; line-height: 1.55; }
+.decision small { margin-top: auto; color: var(--grey); font-size: 13px; }
+.incidents { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.incident { display: flex; flex-direction: column; gap: 12px; }
+.inc-meta { display: flex; align-items: center; gap: 12px; }
+.inc-meta small { color: var(--grey); font-size: 13px; }
+.inc-tag { padding: 4px 10px; border-radius: 999px; background: var(--yellow-50); color: #8a6209; font-size: 12px; font-weight: 600; }
+.inc-tag.is-inc { background: var(--rose-50); color: #b42335; }
+.incident h2 { font-size: 18px; font-weight: 700; }
+.incident blockquote { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 14px; background: var(--wash); }
+.incident blockquote p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+.empty { display: grid; justify-items: center; text-align: center; gap: 10px; padding: 64px 24px; }
+.empty-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--mint-50); color: var(--mint); display: grid; place-items: center; }
+.empty p { color: var(--grey); }
+
+/* notes */
+.feature { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); min-height: 300px; border-radius: 24px; overflow: hidden; border: 1px solid var(--line); background: var(--canvas); text-align: left; transition: box-shadow .3s; }
+.feature:hover { box-shadow: var(--shadow); }
+.feature-img { position: relative; background: var(--wash); }
+.feature-img img, .feature-img .photo-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.feature-body { padding: 40px; display: flex; flex-direction: column; gap: 16px; justify-content: center; background: linear-gradient(160deg, var(--violet-50), #ffffff 70%); }
+.feature-body strong { font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1.15; max-width: 18ch; }
+.feature-stats { display: flex; gap: 24px; color: var(--grey); font-size: 14px; }
+.feature-stats b { display: block; font-size: 24px; color: var(--ink); letter-spacing: -.03em; }
+.feature-cta { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--violet); }
+.notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.note { display: flex; flex-direction: column; gap: 10px; transition: transform .25s, box-shadow .25s; }
+.note:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.note-icon, .tool-mark { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 4px; }
+.kind { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey); }
+.note h2 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; }
+.note p { color: var(--ink-2); font-size: 14.5px; line-height: 1.55; }
+.date { margin-top: auto; padding-top: 8px; color: var(--grey); font-size: 13px; }
+
+/* tools */
+.tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.tool { display: flex; flex-direction: column; gap: 4px; transition: transform .25s, box-shadow .25s; }
+.tool:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.tool-mark { font-weight: 800; font-size: 15px; letter-spacing: -.02em; margin-bottom: 12px; }
+.tool h2 { font-size: 17px; font-weight: 700; }
+.tool small { color: var(--grey); font-size: 13px; }
+.tool p { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+.ship { padding: 32px; }
+.ship h2 { margin-bottom: 32px; }
+.ship ol { display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+.ship ol::before { content: ""; position: absolute; left: 10%; right: 10%; top: 20px; height: 2px; background: var(--line); }
+.ship li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; color: var(--ink-2); text-align: center; }
+.ship li span { width: 42px; height: 42px; border-radius: 50%; background: var(--canvas); border: 2px solid var(--line); display: grid; place-items: center; font-weight: 700; color: var(--grey); }
+.ship li.is-gate span { background: var(--mint); border-color: var(--mint); color: #fff; box-shadow: 0 0 0 6px var(--mint-50); }
+.ship li.is-gate { color: var(--ink); font-weight: 700; }
+
+/* team */
+.team-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+.plan-wrap { overflow-x: auto; border-radius: 24px; }
+.plan { display: block; width: 100%; min-width: 680px; height: auto; }
+.floor { fill: #f4f5f2; stroke: #e2e4df; stroke-width: 2; }
+.room { stroke-width: 1.5; }
+.room--mint { fill: #f0faf4; stroke: #d3eedf; } .room--violet { fill: #f6f4ff; stroke: #e4dffb; } .room--rose { fill: #fff6f6; stroke: #f8e0e2; } .room--yellow { fill: #fffaec; stroke: #f5e8c2; } .room--plain { fill: #ffffff; stroke: #e7e9ec; }
+.room-label { font-size: 14px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.room-label--mint { fill: #2f9f6a; } .room-label--violet { fill: #7b68d9; } .room-label--rose { fill: #d9485a; } .room-label--yellow { fill: #b07f0b; } .room-label--plain { fill: #a3acb6; }
+.room-note { font-size: 12px; fill: #8a6f4a; font-weight: 600; }
+.desk { fill: #f1dfc1; stroke: #e2c99e; stroke-width: 1; }
+.screen-bar { fill: #39424c; }
+.table { fill: #f1dfc1; stroke: #e2c99e; }
+.chair { fill: #dfe3e8; }
+.sofa { fill: #dce6f5; }
+.rug { fill: #f5efe6; }
+.counter { fill: #ece6dc; }
+.pot { fill: #e9dccb; } .leaf { fill: #8fcf9f; } .leaf-hi { fill: #b9e6c3; }
+.seat { cursor: pointer; outline: none; }
+.seat .ring { fill: #ffffff; stroke: transparent; stroke-width: 3; transition: stroke .2s; }
+.seat:hover .ring { stroke: #cfe9db; }
+.seat.is-sel .ring { stroke: var(--mint); }
+.seat:focus-visible .ring { stroke: var(--ink); }
+.ini { font-size: 16px; font-weight: 700; }
+.pres { stroke: #fff; stroke-width: 2.5; fill: var(--grey-2); }
+.pres--online { fill: var(--mint); } .pres--away { fill: var(--yellow); }
+.seat-name { font-size: 16px; font-weight: 700; fill: var(--ink); }
+.seat-role { font-size: 13px; fill: var(--grey); }
+.outline { fill: none; stroke-width: 1.8; stroke-dasharray: 5 5; }
+.outline--left { stroke: #f09aa4; } .outline--you { stroke: #b6a9f0; }
+.wb rect { fill: #fff; stroke: #dfe3e8; }
+.wb text { font-family: var(--hand); font-size: 18px; fill: #4a525b; }
+.wb path { fill: none; stroke: #8a939d; stroke-width: 1.4; stroke-linecap: round; }
+.seat.is-left image.faded { opacity: .75; filter: grayscale(.4); }
+.profile { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 32px 24px; position: sticky; top: 104px; }
+.profile h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin-top: 8px; }
+.profile > small { color: var(--grey); font-size: 14px; }
+.online { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--grey); }
+.online i { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); }
+.online--away i { background: var(--yellow); }
+.profile blockquote { margin: 16px 0 8px; padding: 18px 20px; border-radius: 16px; background: var(--yellow-50); font-size: 15px; line-height: 1.55; color: var(--ink-2); text-align: left; }
+.profile cite { display: block; margin-top: 8px; font-style: normal; font-size: 13px; color: var(--grey); }
+.profile cite::before { content: "— "; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.tags span { padding: 5px 12px; border-radius: 999px; background: var(--wash); font-size: 12.5px; color: var(--ink-2); }
+.teams { margin-top: 16px; width: 100%; height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 14px; background: #f1f2fc; color: #4a52b8; font-weight: 600; }
+.teams:hover { background: #e7e9fa; }
+
+/* advice */
+.advice { max-width: 860px; min-height: calc(100vh - 88px); }
+.convo { flex: 1; display: flex; flex-direction: column; gap: 24px; min-height: calc(100vh - 200px); }
+.intro { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px; padding-block: 24px; }
+.intro-photo { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; position: relative; box-shadow: 0 0 0 6px var(--mint-50); }
+.intro-photo img, .intro-photo .photo-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.intro-photo .photo-fallback b { font-size: 30px; }
+.intro h1 { font-size: 34px; font-weight: 800; letter-spacing: -.04em; margin-top: 8px; }
+.intro > p { color: var(--grey); font-size: 16px; max-width: 46ch; line-height: 1.55; }
+.starters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; margin-top: 24px; }
+.starters button { display: grid; gap: 4px; padding: 18px 20px; border-radius: 16px; border: 1px solid var(--line); text-align: left; transition: border-color .2s, background .2s; }
+.starters button:hover { border-color: #b9e3cc; background: var(--mint-50); }
+.starters strong { font-size: 15px; font-weight: 600; }
+.starters small { font-size: 13px; color: var(--grey); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 32px; overflow-y: auto; max-height: calc(100vh - 260px); padding: 8px 4px; }
+.turn { display: grid; gap: 20px; }
+.bubble { display: flex; gap: 14px; align-items: flex-start; }
+.bubble--me { justify-content: flex-end; }
+.bubble--me .avatar { display: none; }
+.bubble--me p { background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 18px 18px 4px 18px; max-width: 75%; }
+.agent-mark { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 0 0 auto; }
+.agent-mark i { width: 6px; height: 6px; border-radius: 50%; background: #ff5d63; }
+.agent-mark i:nth-child(2) { background: #ffd57e; } .agent-mark i:nth-child(3) { background: #67bf8b; }
+.bubble-body { flex: 1; min-width: 0; display: grid; gap: 12px; padding: 18px 20px; border-radius: 4px 18px 18px 18px; background: var(--mint-50); }
+.bubble-body p { font-size: 15.5px; line-height: 1.65; }
+.basis { justify-self: start; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #17694a; }
+.basis--code { color: #2453a3; }
+.basis--gap { color: #b42335; }
+.source-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.source-chips button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--canvas); border: 1px solid #d3efe1; font-size: 13px; color: var(--ink-2); }
+.source-chips button:hover { border-color: var(--mint); }
+.route { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px; color: var(--ink-2); padding-top: 12px; border-top: 1px solid #d3efe1; }
+.route .teams-link { margin-left: auto; }
+.teams-link { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; background: #f1f2fc; color: #4a52b8; font-size: 13px; font-weight: 600; }
+.typing { display: flex; gap: 5px; padding: 12px 0 12px 50px; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--grey-2); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 50% { opacity: .25; } }
+.ask-bar--lg { height: 64px; position: sticky; bottom: 24px; }
+
+/* responsive */
+@media (max-width: 1200px) {
+  .home, .repo-top, .team-grid { grid-template-columns: minmax(0, 1fr); }
+  .tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile { position: static; }
+  .welcome-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 76px minmax(0, 1fr); }
+  .side { padding: 24px 12px; }
+  .side .logo span:last-child, .side nav span { display: none; }
+  .side .logo { margin: 0 auto; }
+  .side nav button { justify-content: center; padding: 0; }
+  .repo-bottom, .cards3, .incidents, .notes { grid-template-columns: minmax(0, 1fr); }
+  .feature { grid-template-columns: minmax(0, 1fr); }
+  .feature-img { min-height: 220px; }
+}
+@media (max-width: 640px) {
+  .shell { display: block; padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+  .side { position: fixed; top: auto; bottom: 0; left: 0; right: 0; height: auto; padding: 8px max(8px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); border-right: 0; border-top: 1px solid var(--line); z-index: 30; }
+  .side > .logo { display: none; }
+  .side nav { margin: 0; display: flex; justify-content: space-around; }
+  .side nav button { width: 48px; height: 48px; }
+  .top { height: 72px; }
+  .me span, .me .icon { display: none; }
+  .hello h1, .title h1, .repo-name h1, .intro h1 { font-size: 28px; }
+  .hero { aspect-ratio: 4 / 3; }
+  .hero-note { display: none; }
+  .chips, .src { padding-left: 0; }
+  .tools, .starters { grid-template-columns: minmax(0, 1fr); }
+  .ship ol { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .ship ol::before { display: none; }
+  .ship li { flex-direction: row; text-align: left; }
+  .walk-media { grid-template-columns: minmax(0, 1fr); height: auto; }
+  .walk-photo { height: 180px; }
+  .welcome-brand p { margin-left: 0; }
+  .tabs { gap: 24px; }
+  .legend { position: static; display: flex; flex-wrap: wrap; gap: 12px; padding: 8px; }
+  .lens { position: static; align-self: flex-start; flex-wrap: wrap; }
+  .arch { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* SonarQube + Jira panels */
+.source { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--grey); white-space: nowrap; }
+.src-dot { width: 10px; height: 10px; border-radius: 3px; }
+.src-dot--sonar { background: #4e9bcd; } .src-dot--jira { background: #2684ff; }
+.sonar-body { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+.ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.cov-ring { width: 112px; height: 112px; }
+.cov-track { fill: none; stroke: var(--line); stroke-width: 8; }
+.cov-val { fill: none; stroke-width: 8; stroke-linecap: round; }
+.cov-val--good { stroke: var(--mint); } .cov-val--ok { stroke: var(--yellow); } .cov-val--low { stroke: var(--rose); }
+.cov-num { font-size: 19px; font-weight: 800; fill: var(--ink); letter-spacing: -.03em; }
+.cov-lbl { font-size: 8.5px; fill: var(--grey); }
+.gate { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.gate--pass { background: var(--mint-50); color: #17694a; } .gate--fail { background: var(--rose-50); color: #b42335; }
+.ratings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rating { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; border-radius: 14px; background: var(--wash); font-size: 12.5px; color: var(--grey); }
+.grade { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; font-weight: 800; color: #fff; }
+.grade--mint { background: var(--mint); } .grade--yellow { background: var(--yellow); } .grade--rose { background: var(--rose); } .grade--plain { background: var(--grey-2); }
+.sonar-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
+.sonar-stats div { display: grid; gap: 2px; }
+.sonar-stats dt { font-size: 12.5px; color: var(--grey); }
+.sonar-stats dd { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.sonar-stats dd.bad { color: var(--rose); }
+.jira { display: flex; flex-direction: column; }
+.tickets { flex: 1; }
+.tickets li { display: grid; grid-template-columns: 10px 64px minmax(0, 1fr) auto 26px; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.tickets li:last-child { border-bottom: 0; }
+.ttype { width: 10px; height: 10px; border-radius: 3px; background: var(--blue); }
+.ttype--incident { background: var(--rose); } .ttype--bug { background: #e5484d; border-radius: 50%; } .ttype--story { background: var(--mint); } .ttype--spike { background: var(--violet); } .ttype--techdebt { background: var(--yellow); }
+.tkey { font-size: 12.5px; font-weight: 600; color: #2453a3; font-variant-numeric: tabular-nums; }
+.ttitle { font-size: 14.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tstatus { font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.tstatus--done { background: var(--mint-50); color: #17694a; } .tstatus--inprogress { background: var(--blue-50); color: #2453a3; } .tstatus--open { background: var(--wash); color: var(--ink-2); } .tstatus--wontdo { background: var(--wash); color: var(--grey); }
+.jira .see { margin-top: 12px; align-self: flex-start; }
+@media (max-width: 640px) {
+  .sonar-body { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .ratings { width: 100%; }
+  .sonar-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
+  .tickets li { grid-template-columns: 10px minmax(0, 1fr) auto; }
+  .tkey, .tickets .avatar { display: none; }
+  .board { padding-left: 76px; font-size: 17px; }
+}
+
+/* flow: captions, progress, follow-ups, up next */
+.caption { position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%); width: min(80%, 620px); padding: 12px 18px; border-radius: 14px; background: rgba(14, 19, 24, .78); color: #fff; font-size: clamp(14px, 1.3vw, 17px); line-height: 1.45; text-align: center; backdrop-filter: blur(8px); animation: fadeup .4s ease; }
+.caption--sm { bottom: 18px; left: auto; right: 16px; transform: none; width: auto; max-width: 70%; font-size: 13.5px; padding: 9px 14px; text-align: left; }
+@keyframes fadeup { from { opacity: 0; translate: 0 6px; } }
+.progress { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .45); }
+.progress i { display: block; height: 100%; background: var(--mint); transition: width .5s ease; }
+.hero.is-playing .hero-img { transform: scale(1.03); }
+.follow { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 50px; }
+.follow button { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 13.5px; color: var(--ink-2); transition: border-color .2s, background .2s; }
+.follow button:hover { border-color: #b9e3cc; background: var(--mint-50); }
+.upnext-wrap { max-width: 1440px; margin: 0 auto; padding-bottom: 48px; padding-left: max(16px, env(safe-area-inset-left, 0px), 3vw); padding-right: max(16px, env(safe-area-inset-right, 0px), 3vw); }
+.upnext { width: 100%; display: flex; align-items: center; gap: 24px; padding: 22px 28px; border-radius: var(--r); border: 1px solid var(--line); background: linear-gradient(90deg, var(--wash), #ffffff); text-align: left; transition: border-color .2s, box-shadow .2s; }
+.upnext:hover { border-color: #cfeadb; box-shadow: var(--shadow); }
+.upnext-steps { display: flex; gap: 6px; }
+.upnext-steps i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.upnext-steps i.done { background: var(--mint); }
+.upnext-steps i.here { background: var(--ink); }
+.upnext-text { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.upnext-text small { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--grey); }
+.upnext-text strong { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.upnext-text span { font-size: 14.5px; color: var(--grey); }
+.upnext-go { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; flex: 0 0 auto; transition: transform .2s; }
+.upnext:hover .upnext-go { transform: translateX(3px); }
+@media (max-width: 640px) {
+  .upnext { padding: 18px; gap: 14px; }
+  .upnext-steps { display: none; }
+  .caption { bottom: 64px; width: 88%; }
+  .follow { padding-left: 0; }
+}
+
+/* home fits exactly one screen */
+.home { height: calc(100vh - 88px); height: calc(100dvh - 88px); min-height: 0; padding-block: 4px 28px; align-items: stretch; overflow: hidden; }
+.home-main { min-height: 0; gap: clamp(14px, 2.4vh, 24px); }
+.home .hello h1 { font-size: clamp(28px, min(2.6vw, 4.2vh), 34px); }
+.home .hero { aspect-ratio: auto; flex: 1 1 0; min-height: 200px; }
+.home .prompt { gap: 12px; }
+.home .chips { flex-wrap: nowrap; overflow: hidden; }
+.home .chips button { white-space: nowrap; }
+.home-side { min-height: 0; gap: clamp(14px, 2.4vh, 24px); padding-top: 0; }
+.home-side .panel { padding: clamp(16px, 2.6vh, 24px) 24px; }
+.home-side .panel-head { margin-bottom: clamp(6px, 1.2vh, 16px); }
+.home-side .repo-list button { padding: clamp(7px, 1.25vh, 14px) 0; }
+.home-side .health-bar { margin-bottom: clamp(8px, 1.2vh, 16px); }
+.home-side .health-list li { padding: clamp(3px, .7vh, 8px) 0; }
+.upnext--compact { padding: 16px 16px 16px 24px; gap: 16px; margin-top: auto; }
+.upnext--compact .upnext-text strong { font-size: 16px; }
+.upnext--compact .upnext-go { width: 40px; height: 40px; }
+@media (max-width: 1200px), (max-height: 700px) {
+  .home { height: auto; overflow: visible; }
+  .home .hero { aspect-ratio: 16 / 8.2; flex: none; }
+  .home .chips { flex-wrap: wrap; }
+}
+@media (min-width: 1201px) and (max-height: 900px) {
+  .home-side .repo-list li:nth-child(5) { display: none; }
+}
+@media (min-width: 1201px) and (max-height: 780px) {
+  .home-side .repo-list small { display: none; }
+}
+
+/* first commit — repo chips → ticket list → guide appears only after a pick */
+.first { gap: 24px; }
+.chips-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips-row button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; color: var(--ink-2); background: var(--canvas); transition: border-color .2s, background .2s; }
+.chips-row button:hover { border-color: #d9dee4; }
+.chips-row button.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.chips-row .sdot { width: 8px; height: 8px; }
+.first-grid { display: grid; grid-template-columns: minmax(0, 760px); gap: 32px; align-items: start; }
+.first-grid.has-pick { grid-template-columns: minmax(0, 1fr) minmax(360px, 440px); }
+.pick-list { display: grid; gap: 12px; }
+.pick { width: 100%; display: flex; align-items: center; gap: 16px; padding: 20px 20px 20px 24px; border-radius: var(--r); border: 1px solid var(--line); background: var(--canvas); text-align: left; transition: border-color .2s, box-shadow .2s; }
+.pick:hover { border-color: #d9dee4; box-shadow: var(--shadow); }
+.pick.is-picked { border-color: var(--mint); box-shadow: 0 0 0 1px var(--mint); }
+.pick-main { flex: 1; display: grid; gap: 6px; min-width: 0; }
+.pick-main strong { font-size: 17px; font-weight: 650; letter-spacing: -.01em; line-height: 1.35; }
+.pick-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13.5px; color: var(--grey); }
+.good { padding: 2px 10px; border-radius: 999px; background: var(--mint-50); color: #17694a; font-size: 12px; font-weight: 600; }
+.risk--low { color: #17694a; } .risk--medium { color: #8a6209; }
+.pick-go { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--wash); color: var(--ink-2); flex: 0 0 auto; }
+.pick.is-picked .pick-go { background: var(--mint); color: #fff; }
+.guide { position: sticky; top: 104px; display: flex; flex-direction: column; gap: 18px; padding: 24px; animation: fadeup .3s ease; }
+.guide-head { display: flex; align-items: flex-start; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.guide-head div { display: grid; gap: 4px; }
+.guide-head strong { font-size: 17px; line-height: 1.35; }
+.guide-head small { font-size: 13.5px; color: var(--grey); line-height: 1.5; }
+.guide-steps { display: grid; }
+.guide-steps label { display: flex; align-items: center; gap: 12px; padding: 8px 0; cursor: pointer; font-size: 14.5px; color: var(--ink-2); }
+.guide-steps input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.gbox { width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid #d3d9e0; display: grid; place-items: center; flex: 0 0 auto; transition: background .2s, border-color .2s; }
+.guide-steps input:focus-visible + .gbox { outline: 2px solid var(--mint); outline-offset: 2px; }
+.gprogress { height: 4px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: -6px; }
+.gprogress i { display: block; height: 100%; background: var(--mint); border-radius: 99px; transition: width .4s ease; }
+.gbox { font-size: 11.5px; font-weight: 700; color: var(--grey); }
+.guide-steps li.now .gbox { border-color: var(--ink); color: var(--ink); }
+.guide-steps li.now label { color: var(--ink); font-weight: 600; }
+.step-help { display: grid; gap: 10px; margin: 2px 0 10px 34px; padding: 14px 16px; border-radius: 14px; background: var(--wash); animation: fadeup .3s ease; }
+.step-help p { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.step-done { justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 600; }
+.step-done:hover { background: #0a0e12; }
+.copy-line { display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 12px; border-radius: 10px; background: var(--canvas); border: 1px solid var(--line); min-width: 0; }
+.copy-line code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; scrollbar-width: none; }
+.copy-line button { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--grey); }
+.copy-line button:hover { background: var(--wash); color: var(--ink); }
+.guide-steps li.done .gbox { background: var(--mint); border-color: var(--mint); color: #fff; }
+.guide-steps li.done label > span:last-child { color: var(--grey); text-decoration: line-through; text-decoration-color: #cfd5dc; }
+.guide-tip { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: var(--yellow-50); font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.stamp { align-self: center; display: grid; justify-items: center; gap: 2px; padding: 14px 28px; border: 2.5px solid var(--mint); border-radius: 14px; color: #17694a; transform: rotate(-4deg); animation: stamp .45s cubic-bezier(.2, 1.6, .4, 1); }
+.stamp span { font-size: 22px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.stamp small { font-family: var(--hand); font-size: 20px; }
+@keyframes stamp { from { transform: rotate(-4deg) scale(1.6); opacity: 0; } }
+.guide-chat { display: grid; gap: 12px; }
+.guide-chat .bubble--me p { font-size: 14px; padding: 9px 14px; }
+.guide-chat .agent-mark { display: none; }
+.guide-chat .bubble-body { padding: 14px 16px; }
+.guide-chat .bubble-body p { font-size: 14.5px; }
+.guide-qs { display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-qs button { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; color: var(--ink-2); }
+.guide-qs button:hover { border-color: #b9e3cc; background: var(--mint-50); }
+.guide .ask-bar { height: 50px; box-shadow: none; }
+@media (max-width: 1100px) {
+  .first-grid.has-pick { grid-template-columns: minmax(0, 1fr); }
+  .guide { position: static; }
+}
+
+/* first commit — Jira connection */
+.list-col { display: grid; gap: 12px; min-width: 0; }
+.list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 15px; font-weight: 650; }
+.list-head .source { font-weight: 400; }
+.jira-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: -4px; font-size: 13px; color: var(--grey); }
+.jstatus { padding: 3px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; transition: background .3s, color .3s; }
+.jstatus--todo { background: var(--wash); color: var(--ink-2); }
+.jstatus--inprogress { background: var(--blue-50); color: #2453a3; }
+.jstatus--inreview { background: var(--violet-50); color: #5640b8; }
+.assignee { display: inline-flex; align-items: center; gap: 6px; }
+.jira-open { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: #2453a3; font-weight: 600; }
+.jira-open:hover { text-decoration: underline; }
+</style>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>"use strict";
+const { createContext, useContext, useState, useEffect, useMemo, useRef } = React;
+const JOHN_PHOTO = "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=86&w=1200";
+const people = [
+    {
+        id: "john",
+        name: "John Carter",
+        role: "Backend Lead (former)",
+        team: "Payments",
+        handle: "@john-dev",
+        initials: "JC",
+        hue: "mint",
+        photo: JOHN_PHOTO,
+        presence: "left",
+        tz: "Left Sep 30, 2026",
+        room: "payments",
+        fromJohn: "I'm reachable on LinkedIn for a month or two, but the agent has everything I could remember. Ask it first.",
+        askAbout: ["Anything in the interview"],
+    },
+    {
+        id: "maya",
+        name: "Maya Chen",
+        role: "Payments Tech Lead",
+        team: "Payments",
+        handle: "@mayachen",
+        initials: "MC",
+        hue: "blue",
+        presence: "online",
+        tz: "New York · 9–6",
+        room: "payments",
+        fromJohn: "Maya reviewed most of my payments PRs. She knows why the retry cap is 3 and will tell you straight if an idea is risky.",
+        askAbout: ["Retry & idempotency", "Release approvals", "Architecture calls"],
+    },
+    {
+        id: "alex",
+        name: "Alex Rivera",
+        role: "Infra & DevOps",
+        team: "Platform",
+        handle: "@arivera",
+        initials: "AR",
+        hue: "violet",
+        presence: "online",
+        tz: "Austin · 10–7",
+        room: "infra",
+        fromJohn: "Alex owns the gateway, CI and every secret you will need. Ask for Vault access on day one, it takes 48h.",
+        askAbout: ["CI/CD & deploys", "Vault & AWS access", "api-gateway config"],
+    },
+    {
+        id: "priya",
+        name: "Priya Shah",
+        role: "Payments PM",
+        team: "Product",
+        handle: "@priya-s",
+        initials: "PS",
+        hue: "rose",
+        presence: "away",
+        tz: "London · 9–5",
+        room: "product",
+        fromJohn: "Priya knows the why behind every fraud rule and every merchant escalation. Bring her the business question, not the code.",
+        askAbout: ["Fraud rule intent", "Merchant escalations", "Roadmap"],
+    },
+    {
+        id: "zhuoning",
+        name: "Zhuoning Xu",
+        role: "Data Engineer",
+        team: "Data",
+        handle: "@zxu",
+        initials: "ZX",
+        hue: "yellow",
+        presence: "online",
+        tz: "New York · 8–4",
+        room: "data",
+        fromJohn: "Zhuoning wrote the ledger matching jobs with me. If numbers don't reconcile, she'll spot it in five minutes.",
+        askAbout: ["Ledger matching", "Bank file formats", "Reconciliation jobs"],
+    },
+    {
+        id: "prateek",
+        name: "Prateek Mukherjee",
+        role: "Frontend & Notifications",
+        team: "Payments",
+        handle: "@prateekm",
+        initials: "PM",
+        hue: "blue",
+        presence: "online",
+        tz: "Toronto · 9–6",
+        room: "payments",
+        fromJohn: "Prateek owns notifications now. Good first reviewer, fast and kind on PRs.",
+        askAbout: ["Email & SMS templates", "Webhook consumers", "Good first tickets"],
+    },
+    {
+        id: "ava",
+        name: "Ava Okafor",
+        role: "ML Engineer",
+        team: "Risk",
+        handle: "@ava-ml",
+        initials: "AO",
+        hue: "violet",
+        presence: "away",
+        tz: "Lagos · 9–5",
+        room: "data",
+        fromJohn: "Ava retrains the fraud model. Never change a threshold without her. The scores are not linear.",
+        askAbout: ["Fraud model & thresholds", "Feature store", "Shadow scoring"],
+    },
+    {
+        id: "me",
+        name: "New Joiner",
+        role: "Backend Engineer",
+        team: "Payments",
+        handle: "@you",
+        initials: "NJ",
+        hue: "violet",
+        presence: "you",
+        tz: "Day 3 of onboarding",
+        room: "payments",
+        fromJohn: "Welcome. Start with payments-service, it touches everything else.",
+        askAbout: [],
+    },
+];
+const person = (id) => people.find((p) => p.id === id);
+const trend = (end, wobble) => wobble.map((w) => Math.max(0, Math.min(100, Math.round(end + w))));
+const repos = [
+    {
+        id: "payments",
+        name: "payments-service",
+        short: "PS",
+        status: "Needs review",
+        lang: "Python · FastAPI",
+        description: "Core payments processing: validate, authorize, capture, refund.",
+        x: 400,
+        y: 285,
+        owner: "john",
+        interim: "maya",
+        contributors: [
+            { id: "john", pct: 64 },
+            { id: "maya", pct: 18 },
+            { id: "prateek", pct: 9 },
+            { id: "alex", pct: 9 },
+        ],
+        johnPct: 64,
+        lastCommit: 2,
+        commits90: 87,
+        summary: "John built the retry and idempotency layer after incident #4821 (duplicate charges in March) and spent his last quarter hardening webhook handling. Two branches he started are still open and one should not be merged.",
+        sonar: {
+            gate: "Failed",
+            bugs: 3,
+            vulns: 0,
+            hotspots: 4,
+            smells: 61,
+            coverage: 71.4,
+            duplication: 3.8,
+            debt: "4d 2h",
+            reliability: "C",
+            security: "A",
+            maintainability: "B",
+            trend: trend(71, [-6, -5, -5, -3, -4, -2, -1, -2, 0, 1, 0, 0]),
+            scanned: "2h ago",
+            files: [
+                { file: "payments/retry/RetryHandler.py", complexity: 48, churn: 31, johnPct: 92, smell: "Nested retry branches, 1 bug" },
+                { file: "payments/webhooks/consumer.py", complexity: 37, churn: 26, johnPct: 81, smell: "Duplicate-event guard untested" },
+                { file: "payments/capture/flow.py", complexity: 29, churn: 12, johnPct: 70, smell: "Long method (142 lines)" },
+                { file: "payments/idempotency/store.py", complexity: 18, churn: 9, johnPct: 95, smell: "Clean, well tested" },
+            ],
+        },
+        branches: [
+            { name: "main", author: "maya", updated: "2d ago", ahead: 0, behind: 0, state: "default" },
+            { name: "fix/webhook-timeout", author: "maya", updated: "2d ago", ahead: 3, behind: 0, state: "active", pr: "#1182" },
+            { name: "feat/retry-backoff-v2", author: "john", updated: "41d ago", ahead: 14, behind: 37, state: "abandoned", pr: "#1121 (draft)", note: "Half done. The jitter math is wrong. Do not merge. Read incident #4821 first." },
+            { name: "chore/py312-upgrade", author: "john", updated: "29d ago", ahead: 6, behind: 22, state: "stale", note: "Safe to finish. Only the asyncpg pin blocked it." },
+            { name: "spike/ledger-events", author: "john", updated: "63d ago", ahead: 2, behind: 51, state: "abandoned", note: "Throwaway spike. Delete it." },
+        ],
+        changes: [
+            { title: "Add retry metrics for payments", author: "john", date: "Sep 24", level: "risk", ref: "PR #1170" },
+            { title: "Fix timeout handling in webhook", author: "maya", date: "Oct 20", level: "review", ref: "PR #1182" },
+            { title: "Update fraud rules client config", author: "prateek", date: "Sep 18", level: "ok", ref: "PR #1164" },
+            { title: "Refactor ledger sync client", author: "john", date: "Sep 12", level: "ok", ref: "PR #1158" },
+            { title: "Bump dependencies (minor)", author: "alex", date: "Aug 28", level: "minor", ref: "PR #1149" },
+        ],
+        jira: [
+            { key: "INC-4821", title: "Duplicate charges during retry spike", type: "Incident", status: "Done", month: "Mar 2026", johnNote: "Retries were 5 with no idempotency key. We capped at 3 and added keys. Never raise the cap without keys on every call." },
+            { key: "PAY-251", title: "Idempotency keys for capture & refund", type: "Story", status: "Done", month: "Apr 2026" },
+            { key: "PAY-268", title: "Idempotency store TTL tuning", type: "Tech debt", status: "Done", month: "May 2026" },
+            { key: "PAY-294", title: "Reconciliation timeout on large batches", type: "Bug", status: "Done", month: "Jun 2026", johnNote: "The timeout was in ledger-sync, not here. Took me two days to see that." },
+            { key: "PAY-301", title: "Spike: event-sourced ledger writes", type: "Spike", status: "Won't do", month: "Jul 2026" },
+            { key: "PAY-308", title: "Review gateway retry policy", type: "Story", status: "In progress", month: "Aug 2026", johnNote: "This is what feat/retry-backoff-v2 was for. Needs a design review with Maya before more code." },
+            { key: "PAY-319", title: "Retry metrics & dashboards", type: "Story", status: "Done", month: "Sep 2026" },
+            { key: "PAY-322", title: "Duplicate webhook events from provider", type: "Bug", status: "Open", month: "Sep 2026", johnNote: "Provider resends on 5xx and sometimes on 200. The consumer dedupes on event id, but only for 24h." },
+        ],
+        takeaways: [
+            "Keep retries capped at 3 (see incident #4821).",
+            "Use idempotency keys for every payment call.",
+            "Ledger sync is async. Expect delays of a few minutes.",
+            "Watch out for duplicate webhook events.",
+        ],
+        gaps: [
+            { q: "Why is the idempotency TTL 24h and not 72h?", why: "John said he “inherited it” and never checked with the provider.", ask: "maya" },
+            { q: "What happens to a refund if ledger-sync is down for over an hour?", why: "Not covered in the interview or any doc. No test covers it.", ask: "zhuoning" },
+            { q: "Who approves changes to capture amounts over $10k?", why: "John mentioned “a compliance thing” but couldn't recall the owner.", ask: "priya" },
+        ],
+        chapters: [
+            { t: "0:00", label: "The payments flow end to end" },
+            { t: "1:12", label: "Why retries are capped at 3" },
+            { t: "2:30", label: "Idempotency keys and the store" },
+            { t: "3:41", label: "Webhooks and duplicates" },
+            { t: "4:30", label: "What I'd fix next" },
+        ],
+        whiteboard: {
+            flow: ["API", "Validate", "Process", "Ledger"],
+            remember: ["Idempotency", "Retry logic (max 3)", "Watch for duplicate webhooks"],
+        },
+    },
+    {
+        id: "api",
+        name: "api-gateway",
+        short: "AG",
+        status: "Stable",
+        lang: "Go · Envoy",
+        description: "Routes, authenticates and rate-limits external requests.",
+        x: 150,
+        y: 140,
+        owner: "alex",
+        interim: "alex",
+        contributors: [
+            { id: "alex", pct: 58 },
+            { id: "john", pct: 22 },
+            { id: "maya", pct: 20 },
+        ],
+        johnPct: 22,
+        lastCommit: 5,
+        commits90: 34,
+        summary: "John's work here was limited to the payments routes and the retry headers forwarded to payments-service. Alex owns the rest and it is well documented.",
+        sonar: {
+            gate: "Passed",
+            bugs: 0,
+            vulns: 0,
+            hotspots: 1,
+            smells: 12,
+            coverage: 86.2,
+            duplication: 1.1,
+            debt: "6h",
+            reliability: "A",
+            security: "A",
+            maintainability: "A",
+            trend: trend(86, [-2, -2, -1, -1, 0, 0, -1, 0, 1, 0, 0, 0]),
+            scanned: "5h ago",
+            files: [
+                { file: "routes/payments.go", complexity: 14, churn: 8, johnPct: 61, smell: "Retry header passthrough" },
+                { file: "auth/jwt.go", complexity: 11, churn: 4, johnPct: 0, smell: "Clean" },
+            ],
+        },
+        branches: [
+            { name: "main", author: "alex", updated: "5d ago", ahead: 0, behind: 0, state: "default" },
+            { name: "feat/rate-limit-tiers", author: "alex", updated: "5d ago", ahead: 4, behind: 1, state: "active", pr: "#412" },
+        ],
+        changes: [
+            { title: "Rate-limit tiers per merchant", author: "alex", date: "Oct 17", level: "review", ref: "PR #412" },
+            { title: "Forward Idempotency-Key header", author: "john", date: "Apr 09", level: "ok", ref: "PR #377" },
+            { title: "Rotate JWT signing keys", author: "alex", date: "Sep 02", level: "ok", ref: "PR #401" },
+        ],
+        jira: [
+            { key: "PLAT-88", title: "Forward idempotency headers to payments", type: "Story", status: "Done", month: "Apr 2026", johnNote: "If you add a new payments route, add it to the header allowlist too or keys get dropped silently." },
+            { key: "PLAT-97", title: "Gateway timeout to 10s for capture", type: "Story", status: "Done", month: "Jun 2026" },
+        ],
+        takeaways: [
+            "New payments routes must be added to the header allowlist.",
+            "Capture has a longer timeout (10s) than every other route.",
+            "Alex approves every gateway change.",
+        ],
+        gaps: [
+            { q: "Is the 10s capture timeout still needed after PAY-319?", why: "John wasn't sure. Metrics now exist to check.", ask: "alex" },
+        ],
+        chapters: [
+            { t: "0:00", label: "Payments routes" },
+            { t: "0:50", label: "The header allowlist" },
+            { t: "1:40", label: "Timeouts" },
+        ],
+        whiteboard: { flow: ["Client", "Auth", "Rate limit", "Route"], remember: ["Header allowlist", "Capture = 10s timeout", "Alex approves"] },
+    },
+    {
+        id: "fraud",
+        name: "fraud-detection",
+        short: "FD",
+        status: "High risk",
+        lang: "Python · scikit-learn",
+        description: "Risk scoring and rule engine called before every capture.",
+        x: 560,
+        y: 95,
+        owner: "john",
+        interim: "ava",
+        contributors: [
+            { id: "john", pct: 41 },
+            { id: "ava", pct: 39 },
+            { id: "priya", pct: 20 },
+        ],
+        johnPct: 41,
+        lastCommit: 34,
+        commits90: 11,
+        summary: "John wrote the rule engine and the client that payments-service calls. Ava owns the model. Rules are config-driven, and two of them have no recorded reason.",
+        sonar: {
+            gate: "Failed",
+            bugs: 5,
+            vulns: 2,
+            hotspots: 6,
+            smells: 88,
+            coverage: 48.9,
+            duplication: 7.2,
+            debt: "9d 5h",
+            reliability: "D",
+            security: "C",
+            maintainability: "C",
+            trend: trend(49, [4, 3, 3, 2, 2, 1, 1, 0, 0, -1, 0, 0]),
+            scanned: "1d ago",
+            files: [
+                { file: "rules/engine.py", complexity: 52, churn: 14, johnPct: 88, smell: "2 vulnerabilities (eval on config)" },
+                { file: "rules/config/velocity.yaml", complexity: 0, churn: 21, johnPct: 70, smell: "Thresholds without comments" },
+                { file: "model/score.py", complexity: 22, churn: 6, johnPct: 5, smell: "Owned by Ava" },
+            ],
+        },
+        branches: [
+            { name: "main", author: "ava", updated: "34d ago", ahead: 0, behind: 0, state: "default" },
+            { name: "fix/rule-eval-sandbox", author: "john", updated: "40d ago", ahead: 5, behind: 3, state: "stale", pr: "#233", note: "Fixes the two Sonar vulnerabilities. Needs tests, then it's ready." },
+        ],
+        changes: [
+            { title: "Velocity rule threshold 12 → 9", author: "priya", date: "Sep 18", level: "risk", ref: "PR #229" },
+            { title: "Shadow-score new model v7", author: "ava", date: "Sep 10", level: "review", ref: "PR #226" },
+        ],
+        jira: [
+            { key: "FRD-140", title: "Rule engine v2 (config-driven)", type: "Story", status: "Done", month: "Feb 2026" },
+            { key: "FRD-162", title: "Card-testing attack on merchant 8812", type: "Incident", status: "Done", month: "May 2026", johnNote: "We added the velocity rule that night. The threshold was a guess, Priya tuned it later." },
+            { key: "FRD-171", title: "Sandbox rule evaluation", type: "Tech debt", status: "In progress", month: "Aug 2026" },
+        ],
+        takeaways: [
+            "Never change a threshold without Ava. Scores are not linear.",
+            "Rules live in YAML. Every rule change is a production change.",
+            "fix/rule-eval-sandbox closes the two security findings.",
+        ],
+        gaps: [
+            { q: "Why does the geo-mismatch rule exclude Canada?", why: "No ticket, no comment, John didn't remember.", ask: "priya" },
+            { q: "What is the fallback if the scoring service times out?", why: "Code fails open. John wasn't sure that was intentional.", ask: "ava" },
+        ],
+        chapters: [
+            { t: "0:00", label: "Rules vs model" },
+            { t: "1:05", label: "The velocity rule story" },
+            { t: "2:20", label: "The eval() problem" },
+        ],
+        whiteboard: { flow: ["Capture", "Rules", "Model", "Decision"], remember: ["Ask Ava before thresholds", "Rules are prod config", "Fails open (?)"] },
+    },
+    {
+        id: "ledger",
+        name: "ledger-sync",
+        short: "LS",
+        status: "Needs review",
+        lang: "Kotlin · Kafka",
+        description: "Pushes settled payments to the bank ledger, asynchronously.",
+        x: 710,
+        y: 225,
+        owner: "zhuoning",
+        interim: "zhuoning",
+        contributors: [
+            { id: "zhuoning", pct: 52 },
+            { id: "john", pct: 33 },
+            { id: "alex", pct: 15 },
+        ],
+        johnPct: 33,
+        lastCommit: 9,
+        commits90: 26,
+        summary: "John refactored the client that payments-service uses to publish ledger events. Zhuoning owns the consumer and the bank file formats.",
+        sonar: {
+            gate: "Passed",
+            bugs: 1,
+            vulns: 0,
+            hotspots: 2,
+            smells: 30,
+            coverage: 74.0,
+            duplication: 2.9,
+            debt: "1d 4h",
+            reliability: "B",
+            security: "A",
+            maintainability: "B",
+            trend: trend(74, [-3, -3, -2, -2, -1, -1, 0, 0, 0, 1, 0, 0]),
+            scanned: "3h ago",
+            files: [
+                { file: "consumer/BatchWriter.kt", complexity: 26, churn: 15, johnPct: 12, smell: "Long batch timeout" },
+                { file: "client/LedgerPublisher.kt", complexity: 15, churn: 11, johnPct: 80, smell: "Clean after refactor" },
+            ],
+        },
+        branches: [
+            { name: "main", author: "zhuoning", updated: "9d ago", ahead: 0, behind: 0, state: "default" },
+            { name: "feat/bank-file-v3", author: "zhuoning", updated: "9d ago", ahead: 7, behind: 0, state: "active", pr: "#318" },
+        ],
+        changes: [
+            { title: "Bank file format v3", author: "zhuoning", date: "Oct 13", level: "review", ref: "PR #318" },
+            { title: "Refactor ledger publisher client", author: "john", date: "Sep 12", level: "ok", ref: "PR #305" },
+        ],
+        jira: [
+            { key: "LDG-77", title: "Batch timeout on month-end", type: "Bug", status: "Done", month: "Jun 2026", johnNote: "This was the real cause of PAY-294." },
+            { key: "LDG-81", title: "Publisher client refactor", type: "Tech debt", status: "Done", month: "Sep 2026" },
+        ],
+        takeaways: [
+            "Expect a few minutes of lag. Don't build features that assume it's instant.",
+            "Month-end batches are 20× normal size.",
+        ],
+        gaps: [
+            { q: "How do we replay events after a Kafka outage?", why: "John described it as “there's a script somewhere”.", ask: "zhuoning" },
+        ],
+        chapters: [
+            { t: "0:00", label: "Why it's async" },
+            { t: "1:15", label: "Month-end batches" },
+        ],
+        whiteboard: { flow: ["Payment", "Kafka", "Batch", "Bank"], remember: ["Lag is normal", "Month-end = 20×", "Ask Zhuoning"] },
+    },
+    {
+        id: "notification",
+        name: "notification-service",
+        short: "NS",
+        status: "Stable",
+        lang: "TypeScript · Node",
+        description: "Email and SMS payment receipts, alerts and webhooks to merchants.",
+        x: 165,
+        y: 360,
+        owner: "prateek",
+        interim: "prateek",
+        contributors: [
+            { id: "prateek", pct: 71 },
+            { id: "john", pct: 14 },
+            { id: "maya", pct: 15 },
+        ],
+        johnPct: 14,
+        lastCommit: 1,
+        commits90: 52,
+        summary: "Low risk and well tested. The best place for a first commit. John only touched the payment-status consumer.",
+        sonar: {
+            gate: "Passed",
+            bugs: 0,
+            vulns: 0,
+            hotspots: 0,
+            smells: 9,
+            coverage: 88.5,
+            duplication: 1.4,
+            debt: "3h",
+            reliability: "A",
+            security: "A",
+            maintainability: "A",
+            trend: trend(88, [-1, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]),
+            scanned: "40m ago",
+            files: [
+                { file: "src/webhooks/handler.ts", complexity: 12, churn: 18, johnPct: 30, smell: "Missing structured log fields" },
+                { file: "src/templates/receipt.ts", complexity: 6, churn: 9, johnPct: 0, smell: "Clean" },
+            ],
+        },
+        branches: [
+            { name: "main", author: "prateek", updated: "1d ago", ahead: 0, behind: 0, state: "default" },
+            { name: "feat/sms-locale", author: "prateek", updated: "1d ago", ahead: 2, behind: 0, state: "active", pr: "#541" },
+        ],
+        changes: [
+            { title: "SMS receipts in merchant locale", author: "prateek", date: "Oct 21", level: "ok", ref: "PR #541" },
+            { title: "Payment-status consumer retries", author: "john", date: "Jul 30", level: "ok", ref: "PR #509" },
+        ],
+        jira: [
+            { key: "NTF-203", title: "Consume payment.status events", type: "Story", status: "Done", month: "Jul 2026" },
+        ],
+        takeaways: ["Great first-commit repo. Prateek reviews within a day."],
+        gaps: [],
+        chapters: [{ t: "0:00", label: "How receipts are sent" }],
+        whiteboard: { flow: ["Event", "Template", "Provider", "Merchant"], remember: ["Well tested", "Prateek reviews fast"] },
+    },
+    {
+        id: "users",
+        name: "user-service",
+        short: "US",
+        status: "Unknown",
+        lang: "Java · Spring",
+        description: "Customer identity, profiles and payment preferences.",
+        x: 325,
+        y: 470,
+        owner: "alex",
+        interim: "alex",
+        contributors: [
+            { id: "alex", pct: 45 },
+            { id: "maya", pct: 35 },
+            { id: "john", pct: 20 },
+        ],
+        johnPct: 20,
+        lastCommit: 120,
+        commits90: 0,
+        summary: "Not scanned by SonarQube yet and untouched for four months. John called it “legacy but stable”. Nobody on the team claims it.",
+        sonar: {
+            gate: "Failed",
+            bugs: 0,
+            vulns: 0,
+            hotspots: 0,
+            smells: 0,
+            coverage: 0,
+            duplication: 0,
+            debt: "—",
+            reliability: "—",
+            security: "—",
+            maintainability: "—",
+            trend: [],
+            scanned: "Never",
+            files: [],
+        },
+        branches: [{ name: "main", author: "alex", updated: "120d ago", ahead: 0, behind: 0, state: "default" }],
+        changes: [{ title: "Java 17 upgrade", author: "alex", date: "Jun 24", level: "minor", ref: "PR #88" }],
+        jira: [],
+        takeaways: ["Legacy but stable. Connect it to SonarQube before changing anything."],
+        gaps: [{ q: "Who owns user-service?", why: "CODEOWNERS points to a team that no longer exists.", ask: "alex" }],
+        chapters: [],
+        whiteboard: { flow: ["Login", "Profile", "Prefs"], remember: ["Not scanned", "No owner"] },
+    },
+    {
+        id: "recon",
+        name: "reconciliation-engine",
+        short: "RE",
+        status: "High risk",
+        lang: "Python · Airflow",
+        description: "Matches provider settlements against the internal ledger nightly.",
+        x: 655,
+        y: 440,
+        owner: "john",
+        interim: "zhuoning",
+        contributors: [
+            { id: "john", pct: 76 },
+            { id: "zhuoning", pct: 24 },
+        ],
+        johnPct: 76,
+        lastCommit: 22,
+        commits90: 19,
+        summary: "Highest knowledge risk in the codebase: John wrote 76% of it. Matching rules are clever and under-documented. Nightly failures page whoever is on call.",
+        sonar: {
+            gate: "Failed",
+            bugs: 4,
+            vulns: 0,
+            hotspots: 1,
+            smells: 72,
+            coverage: 52.3,
+            duplication: 5.6,
+            debt: "6d 1h",
+            reliability: "C",
+            security: "A",
+            maintainability: "C",
+            trend: trend(52, [3, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0]),
+            scanned: "6h ago",
+            files: [
+                { file: "matching/fuzzy_match.py", complexity: 61, churn: 19, johnPct: 97, smell: "Cognitive complexity 61" },
+                { file: "dags/nightly_recon.py", complexity: 19, churn: 14, johnPct: 85, smell: "Hard-coded retry counts" },
+            ],
+        },
+        branches: [
+            { name: "main", author: "zhuoning", updated: "22d ago", ahead: 0, behind: 0, state: "default" },
+            { name: "feat/fx-tolerance", author: "john", updated: "35d ago", ahead: 9, behind: 4, state: "stale", pr: "#97", note: "Good idea, tests are real. Needs Zhuoning's review of the 0.5% tolerance." },
+        ],
+        changes: [
+            { title: "FX tolerance for cross-currency", author: "john", date: "Sep 17", level: "review", ref: "PR #97" },
+            { title: "Fuzzy matcher: amount rounding", author: "john", date: "Aug 30", level: "risk", ref: "PR #94" },
+        ],
+        jira: [
+            { key: "REC-31", title: "Fuzzy matching for partial captures", type: "Story", status: "Done", month: "Apr 2026" },
+            { key: "REC-40", title: "Nightly recon failed 3 nights in a row", type: "Incident", status: "Done", month: "Aug 2026", johnNote: "Rounding on JPY amounts. Zero-decimal currencies are the trap here." },
+            { key: "REC-44", title: "FX tolerance", type: "Story", status: "In progress", month: "Sep 2026" },
+        ],
+        takeaways: [
+            "Zero-decimal currencies (JPY, KRW) break naive rounding.",
+            "Nightly failures page on-call. Check the DAG log before the code.",
+            "fuzzy_match.py is the riskiest file in the codebase.",
+        ],
+        gaps: [
+            { q: "Why is the fuzzy match window 72 hours?", why: "John: “felt right at the time”. No data behind it.", ask: "zhuoning" },
+            { q: "Which merchants are excluded from auto-matching?", why: "There is a list in code, nobody knows who maintains it.", ask: "priya" },
+        ],
+        chapters: [
+            { t: "0:00", label: "What reconciliation means here" },
+            { t: "1:30", label: "The fuzzy matcher" },
+            { t: "3:10", label: "The JPY incident" },
+        ],
+        whiteboard: { flow: ["Provider file", "Match", "Diff", "Alert"], remember: ["Zero-decimal currencies", "DAG log first", "72h window (?)"] },
+    },
+];
+const repo = (id) => repos.find((r) => r.id === id);
+const edges = [
+    { from: "api", to: "payments", kind: "request" },
+    { from: "payments", to: "fraud", kind: "request" },
+    { from: "users", to: "payments", kind: "data" },
+    { from: "payments", to: "ledger", kind: "async" },
+    { from: "payments", to: "notification", kind: "async" },
+    { from: "ledger", to: "recon", kind: "data" },
+    { from: "payments", to: "recon", kind: "async" },
+];
+const docs = [
+    { id: "interview", title: "Exit interview with John (transcript)", kind: "Interview", updated: "Sep 26, 2026", drift: 0, minutes: 32, summary: "A 32-minute structured interview run by the Last Commit agent on John's second-to-last day.", points: ["41 facts extracted and linked to code", "9 open questions he couldn't answer", "Ranked his own repos by risk"] },
+    { id: "adr-retry", title: "ADR-012: Cap payment retries at 3", kind: "Decision", repo: "payments", updated: "Mar 28, 2026", drift: 4, minutes: 4, summary: "Why retries were reduced from 5 to 3 after INC-4821, and the condition for ever raising them.", points: ["Retries > 3 caused duplicate captures", "Raise only with idempotency keys on every call", "Owner: Maya Chen"] },
+    { id: "adr-idem", title: "ADR-013: Idempotency keys for money movement", kind: "Decision", repo: "payments", updated: "Apr 15, 2026", drift: 9, minutes: 5, summary: "Every capture and refund carries a client-generated key stored for 24h.", points: ["Key format: merchant + order + attempt", "24h TTL (see open question)", "Gateway must forward the header"] },
+    { id: "pm-4821", title: "Postmortem: INC-4821 duplicate charges", kind: "Postmortem", repo: "payments", updated: "Mar 22, 2026", drift: 31, minutes: 7, summary: "312 customers double-charged over 40 minutes during a provider slowdown.", points: ["Root cause: retries without idempotency", "Detected by support, not alerts", "Led to ADR-012 and ADR-013"] },
+    { id: "rb-payments", title: "Payments on-call runbook", kind: "Runbook", repo: "payments", updated: "Jan 10, 2026", drift: 58, minutes: 9, summary: "Alerts, dashboards and first steps for payments incidents.", points: ["Written before the retry changes", "Dashboard links point to old Grafana", "Needs an update before you go on call"] },
+    { id: "rb-recon", title: "Nightly reconciliation runbook", kind: "Runbook", repo: "recon", updated: "Aug 21, 2026", drift: 6, minutes: 6, summary: "What to do when the nightly DAG fails.", points: ["Check the DAG log before the code", "Zero-decimal currency checklist", "Escalate to Zhuoning"] },
+    { id: "guide-fraud", title: "How fraud rules are configured", kind: "Guide", repo: "fraud", updated: "Feb 20, 2026", drift: 21, minutes: 5, summary: "YAML rule format, deploy path and the eval sandbox plan.", points: ["Rules ship like code", "Two rules have no recorded reason", "Ava signs off on thresholds"] },
+    { id: "guide-local", title: "John's local setup notes", kind: "Guide", updated: "Sep 25, 2026", drift: 2, minutes: 3, summary: "Everything John had to do to get a working laptop, in order.", points: ["Request Vault first (48h)", "Use the docker compose stack, not minikube", "Seed data script lives in tools/"] },
+];
+// ─── Exit interview ─────────────────────────────────────────────────────
+const interview = {
+    minutes: 32,
+    facts: 41,
+    questions: 10,
+    date: "Sep 26, 2026",
+    chapters: [
+        { t: "00:00", label: "What John owned and why", repo: "payments" },
+        { t: "04:10", label: "Retries, idempotency and INC-4821", repo: "payments" },
+        { t: "11:35", label: "The reconciliation engine, honestly", repo: "recon" },
+        { t: "17:20", label: "Fraud rules nobody can explain", repo: "fraud" },
+        { t: "22:05", label: "Unfinished branches", repo: "payments" },
+        { t: "26:40", label: "Who to ask for what", repo: undefined },
+        { t: "29:50", label: "Advice for whoever comes next", repo: undefined },
+    ],
+};
+const access = [
+    { id: "gh", name: "GitHub · acme-payments org", why: "Clone repos, open PRs", approver: "alex", eta: "Instant", state: "granted" },
+    { id: "jira", name: "Jira · PAY, FRD, REC projects", why: "Pick up tickets", approver: "maya", eta: "Instant", state: "granted" },
+    { id: "sonar", name: "SonarQube", why: "See quality gates on your PRs", approver: "alex", eta: "Same day", state: "pending" },
+    { id: "vault", name: "Vault · payments/dev", why: "Local secrets. Nothing runs without it", approver: "alex", eta: "~48h", state: "todo" },
+    { id: "aws", name: "AWS · payments-staging (read)", why: "Read logs in staging", approver: "alex", eta: "1 day", state: "todo" },
+    { id: "dd", name: "Datadog", why: "Dashboards and alerts", approver: "maya", eta: "Same day", state: "todo" },
+];
+const stack = [
+    {
+        group: "Languages & services",
+        items: [
+            { name: "Python 3.11 · FastAPI", use: "payments-service, fraud-detection, reconciliation-engine", tip: "John pinned 3.11 because of asyncpg. The py312 branch is nearly done." },
+            { name: "Kotlin · Kafka Streams", use: "ledger-sync" },
+            { name: "Go · Envoy", use: "api-gateway" },
+            { name: "TypeScript · Node 20", use: "notification-service" },
+        ],
+    },
+    {
+        group: "Data",
+        items: [
+            { name: "PostgreSQL 15", use: "Payments and idempotency store", tip: "Idempotency rows expire after 24h via a cron, not a TTL index." },
+            { name: "Kafka", use: "payment.status and ledger events" },
+            { name: "Airflow", use: "Nightly reconciliation DAG" },
+        ],
+    },
+    {
+        group: "Ship & observe",
+        items: [
+            { name: "GitHub Actions", use: "CI on every PR" },
+            { name: "SonarQube", use: "Quality gate blocks merge" },
+            { name: "Argo CD", use: "Deploys to staging, then canary" },
+            { name: "Datadog", use: "Dashboards, alerts, traces", tip: "The ‘Payments golden signals’ dashboard is the one John watched." },
+        ],
+    },
+];
+const pipeline = [
+    { name: "Branch", detail: "feat/PAY-123-short-name" },
+    { name: "PR", detail: "CODEOWNERS auto-assigned" },
+    { name: "CI", detail: "Tests + lint · ~6 min" },
+    { name: "Quality gate", detail: "SonarQube: no new bugs, ≥80% new-code coverage" },
+    { name: "Staging", detail: "Argo CD on merge" },
+    { name: "Canary", detail: "5% for 30 min" },
+    { name: "Production", detail: "Maya approves payments" },
+];
+const integrations = [
+    { name: "GitHub", what: "7 repos · branches · PRs · CODEOWNERS", state: "Connected", synced: "5 min ago" },
+    { name: "Jira", what: "PAY, FRD, REC, LDG, PLAT · 212 tickets by John", state: "Connected", synced: "12 min ago" },
+    { name: "SonarQube", what: "6 of 7 repos scanned", state: "Partial", synced: "40 min ago" },
+    { name: "Confluence", what: "8 docs linked to code", state: "Connected", synced: "1h ago" },
+    { name: "Microsoft Teams", what: "Message people from any page", state: "Connected", synced: "Live" },
+    { name: "Datadog", what: "Live service health on the map", state: "Not connected", synced: "" },
+];
+const setupCommands = [
+    { label: "Clone the main repo", cmd: "gh repo clone acme-payments/payments-service" },
+    { label: "Pull local secrets (needs Vault)", cmd: "make secrets ENV=dev" },
+    { label: "Start the stack", cmd: "docker compose up -d postgres kafka" },
+    { label: "Seed test data", cmd: "python tools/seed.py --merchants 20" },
+    { label: "Run the tests", cmd: "make test" },
+];
+const starters = [
+    {
+        key: "NTF-219",
+        title: "Add structured log fields to the webhook handler",
+        repo: "notification",
+        risk: "Low",
+        estimate: "½ day",
+        mentor: "prateek",
+        why: "Green quality gate, 88% coverage, fast reviewer. You'll learn the payment.status event shape you'll see everywhere.",
+        files: ["src/webhooks/handler.ts", "src/webhooks/handler.test.ts"],
+        johnTip: "Log the idempotency key and event id. Those are the two fields everyone searches for in an incident.",
+    },
+    {
+        key: "PAY-331",
+        title: "Finish the Python 3.12 upgrade",
+        repo: "payments",
+        risk: "Medium",
+        estimate: "1–2 days",
+        mentor: "maya",
+        why: "John's branch chore/py312-upgrade is 90% done. Only the asyncpg pin blocked it.",
+        files: ["pyproject.toml", "Dockerfile", ".github/workflows/ci.yml"],
+        johnTip: "Rebase onto main first. It's 22 commits behind.",
+    },
+    {
+        key: "FRD-174",
+        title: "Write tests for the rule eval sandbox",
+        repo: "fraud",
+        risk: "Medium",
+        estimate: "1 day",
+        mentor: "ava",
+        why: "Closes two SonarQube vulnerabilities. The fix exists, it only needs tests.",
+        files: ["rules/engine.py", "tests/test_engine_sandbox.py"],
+        johnTip: "The YAML fixtures in tests/fixtures cover every rule type.",
+    },
+];
+const journey = [
+    { id: "home", label: "Meet John", hint: "Watch the intro" },
+    { id: "codebase", label: "Map", hint: "See the system" },
+    { id: "repo", label: "Deep dive", hint: "One repo in depth" },
+    { id: "ask", label: "Ask John", hint: "Fill your gaps" },
+    { id: "team", label: "Team", hint: "Who to ask" },
+    { id: "first", label: "First commit", hint: "Ship something" },
+];
+const AppCtx = createContext(null);
+const useApp = () => useContext(AppCtx);
+// ─── Icons ──────────────────────────────────────────────────────────────
+const P = {
+    home: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "m3 10 9-7 9 7" }),
+        React.createElement("path", { d: "M5 9v11h14V9M9 20v-7h6v7" })),
+    map: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M12 3 3 8l9 5 9-5z" }),
+        React.createElement("path", { d: "m3 13 9 5 9-5M3 17.5l9 5 9-5" })),
+    code: React.createElement("path", { d: "m8 5-6 7 6 7M16 5l6 7-6 7M14 3l-4 18" }),
+    note: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M6 3h10l3 3v15H6z" }),
+        React.createElement("path", { d: "M9 10h7M9 14h7M9 18h4" })),
+    tool: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z" })),
+    team: React.createElement(React.Fragment, null,
+        React.createElement("circle", { cx: "9", cy: "8", r: "4" }),
+        React.createElement("path", { d: "M2 21v-2a6 6 0 0 1 12 0v2M16 4a4 4 0 0 1 0 8M18 15a5 5 0 0 1 4 5v1" })),
+    chat: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z" }),
+        React.createElement("path", { d: "M8.5 12h.01M12 12h.01M15.5 12h.01" })),
+    flag: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M5 21V4M5 4h11l-2 4 2 4H5" })),
+    search: React.createElement(React.Fragment, null,
+        React.createElement("circle", { cx: "11", cy: "11", r: "7" }),
+        React.createElement("path", { d: "m20 20-4-4" })),
+    close: React.createElement("path", { d: "m5 5 14 14M19 5 5 19" }),
+    arrow: React.createElement("path", { d: "M4 12h16M14 6l6 6-6 6" }),
+    ext: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M14 4h6v6M20 4l-9 9" }),
+        React.createElement("path", { d: "M18 14v6H4V6h6" })),
+    github: React.createElement("path", { d: "M9 19c-4 1.2-4-2-5-2.5M14 22v-3.5a3 3 0 0 0-.8-2.4c2.7-.3 5.5-1.3 5.5-6A4.6 4.6 0 0 0 17.5 7 4.3 4.3 0 0 0 17.4 4S16.5 3.7 14 5a10.4 10.4 0 0 0-5 0C6.5 3.7 5.6 4 5.6 4A4.3 4.3 0 0 0 5.5 7a4.6 4.6 0 0 0-1.2 3.1c0 4.7 2.8 5.7 5.5 6a3 3 0 0 0-.8 2.4V22" }),
+    chevron: React.createElement("path", { d: "m8 10 4 4 4-4" }),
+    expand: React.createElement("path", { d: "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" }),
+    send: React.createElement("path", { d: "m22 2-9 20-2-9-9-2zM22 2 11 13" }),
+    play: React.createElement("path", { d: "M7 4v16l13-8z", fill: "currentColor" }),
+    pause: React.createElement("path", { d: "M7 4h3v16H7zM14 4h3v16h-3z", fill: "currentColor" }),
+    check: React.createElement("path", { d: "m4 12 5 5L20 6" }),
+    branch: React.createElement(React.Fragment, null,
+        React.createElement("circle", { cx: "6", cy: "5", r: "2" }),
+        React.createElement("circle", { cx: "6", cy: "19", r: "2" }),
+        React.createElement("circle", { cx: "18", cy: "8", r: "2" }),
+        React.createElement("path", { d: "M6 7v10M18 10c0 4-6 3-12 7" })),
+    ticket: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M3 8a2 2 0 0 0 0 4v5h18v-5a2 2 0 0 1 0-4V4H3z" }),
+        React.createElement("path", { d: "M14 4v13", strokeDasharray: "2 2" })),
+    shield: React.createElement("path", { d: "M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z" }),
+    copy: React.createElement(React.Fragment, null,
+        React.createElement("rect", { x: "8", y: "8", width: "12", height: "12", rx: "2" }),
+        React.createElement("path", { d: "M16 8V4H4v12h4" })),
+    file: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M6 3h8l5 5v13H6z" }),
+        React.createElement("path", { d: "M14 3v5h5" })),
+    video: React.createElement(React.Fragment, null,
+        React.createElement("rect", { x: "3", y: "6", width: "13", height: "12", rx: "2" }),
+        React.createElement("path", { d: "m16 10 5-3v10l-5-3" })),
+    bulb: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M9 18h6M10 21h4" }),
+        React.createElement("path", { d: "M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z" })),
+    alert: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M12 3 2 20h20z" }),
+        React.createElement("path", { d: "M12 10v4M12 17h.01" })),
+    question: React.createElement(React.Fragment, null,
+        React.createElement("circle", { cx: "12", cy: "12", r: "9" }),
+        React.createElement("path", { d: "M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17h.01" })),
+    plug: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0zM12 17v5" })),
+    sonar: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M3 12a9 9 0 0 1 9-9M6.5 12A5.5 5.5 0 0 1 12 6.5" }),
+        React.createElement("circle", { cx: "12", cy: "12", r: "2" }),
+        React.createElement("path", { d: "M14 14l6 6" })),
+    lock: React.createElement(React.Fragment, null,
+        React.createElement("rect", { x: "4", y: "10", width: "16", height: "11", rx: "2" }),
+        React.createElement("path", { d: "M8 10V7a4 4 0 0 1 8 0v3" })),
+    sparkle: React.createElement("path", { d: "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" }),
+};
+function Icon({ name, size = 20, className = "" }) {
+    var _a;
+    return (React.createElement("svg", { "aria-hidden": "true", className: `icon ${className}`, width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" }, (_a = P[name]) !== null && _a !== void 0 ? _a : P.sparkle));
+}
+function TeamsLogo({ size = 18 }) {
+    return (React.createElement("svg", { "aria-hidden": "true", width: size, height: size, viewBox: "0 0 24 24" },
+        React.createElement("circle", { cx: "17.5", cy: "5", r: "2.2", fill: "#7b83eb" }),
+        React.createElement("circle", { cx: "12.4", cy: "4.2", r: "2.8", fill: "#5059c9" }),
+        React.createElement("path", { d: "M14.5 8h5.8c.9 0 1.7.8 1.7 1.7v6.7c0 2.3-1.8 4.1-4.1 4.1s-4.1-1.8-4.1-4.1V8.7c0-.4.3-.7.7-.7Z", fill: "#7b83eb" }),
+        React.createElement("path", { d: "M9.4 7h7c.9 0 1.6.7 1.6 1.6v7.8a5.6 5.6 0 0 1-11.2 0V9.6A2.6 2.6 0 0 1 9.4 7Z", fill: "#5059c9" }),
+        React.createElement("rect", { x: "2", y: "6", width: "10", height: "10", rx: "1.8", fill: "#6264a7" }),
+        React.createElement("path", { d: "M4.5 8.5h5v1.4H7.7v4.2H6.2V9.9H4.5Z", fill: "#fff" })));
+}
+function Logo({ compact = false }) {
+    return (React.createElement("div", { className: `logo ${compact ? "logo--compact" : ""}` },
+        React.createElement("span", { className: "logo-mark", "aria-hidden": "true" },
+            React.createElement("i", null),
+            React.createElement("i", null),
+            React.createElement("i", null),
+            React.createElement("i", null)),
+        React.createElement("span", { className: "logo-word" },
+            "Last",
+            React.createElement("br", null),
+            "Commit")));
+}
+// ─── Avatars ────────────────────────────────────────────────────────────
+function Avatar({ id, p, size = 40, presence = false }) {
+    const who = p !== null && p !== void 0 ? p : person(id);
+    const [broken, setBroken] = useState(false);
+    return (React.createElement("span", { className: `avatar hue-${who.hue} ${who.presence === "left" ? "is-left" : ""}`, style: { width: size, height: size, fontSize: Math.round(size * 0.36) }, title: who.name },
+        who.photo && !broken ? React.createElement("img", { src: who.photo, alt: "", onError: () => setBroken(true) }) : React.createElement("b", null, who.initials),
+        presence && React.createElement("i", { className: `presence presence--${who.presence}` })));
+}
+function AvatarStack({ ids, size = 28 }) {
+    return (React.createElement("span", { className: "avatar-stack" }, ids.map((id) => React.createElement(Avatar, { key: id, id: id, size: size }))));
+}
+function TeamsButton({ id, compact = false }) {
+    const who = person(id);
+    if (who.presence === "left" || who.presence === "you")
+        return null;
+    return (React.createElement("a", { className: `teams-link ${compact ? "teams-link--compact" : ""}`, href: "https://teams.microsoft.com/l/chat/0/0", target: "_blank", rel: "noreferrer", "aria-label": `Message ${who.name} on Teams` },
+        React.createElement(TeamsLogo, { size: compact ? 16 : 18 }),
+        compact ? "Message" : "Message on Teams"));
+}
+// ─── Small atoms ────────────────────────────────────────────────────────
+const statusKey = (s) => s.toLowerCase().replace(" ", "-");
+function StatusPill({ value }) {
+    return React.createElement("span", { className: `status status--${statusKey(value)}` },
+        React.createElement("i", null),
+        value);
+}
+function Rating({ v }) {
+    return React.createElement("b", { className: `rating rating--${v === "—" ? "na" : v}` }, v);
+}
+function Sparkline({ data, w = 160, h = 40 }) {
+    if (!data.length)
+        return React.createElement("span", { className: "muted small" }, "No scans yet");
+    const min = Math.min(...data) - 2;
+    const max = Math.max(...data) + 2;
+    const x = (i) => (i / (data.length - 1)) * (w - 8) + 4;
+    const y = (v) => h - 4 - ((v - min) / (max - min)) * (h - 8);
+    const line = data.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+    return (React.createElement("svg", { className: "spark", width: w, height: h, viewBox: `0 0 ${w} ${h}`, "aria-hidden": "true" },
+        React.createElement("path", { d: `${line} L${x(data.length - 1)} ${h} L${x(0)} ${h} Z`, className: "spark-fill" }),
+        React.createElement("path", { d: line, className: "spark-line" }),
+        React.createElement("circle", { cx: x(data.length - 1), cy: y(data[data.length - 1]), r: "3.2", className: "spark-dot" })));
+}
+function CopyLine({ cmd }) {
+    const { toast } = useApp();
+    const [done, setDone] = useState(false);
+    const copy = () => {
+        const ok = () => { setDone(true); toast("Copied to clipboard"); window.setTimeout(() => setDone(false), 1400); };
+        try {
+            navigator.clipboard.writeText(cmd).then(ok, () => toast("Select the text to copy it"));
+        }
+        catch {
+            toast("Select the text to copy it");
+        }
+    };
+    return (React.createElement("div", { className: "copy-line" },
+        React.createElement("code", null, cmd),
+        React.createElement("button", { onClick: copy, "aria-label": "Copy command" }, done ? React.createElement(Icon, { name: "check", size: 16 }) : React.createElement(Icon, { name: "copy", size: 16 }))));
+}
+function CopyButton({ text, label }) {
+    const { toast } = useApp();
+    const copy = () => {
+        try {
+            navigator.clipboard.writeText(text).then(() => toast("Copied. Paste it into Teams."), () => toast("Select the text above to copy it"));
+        }
+        catch {
+            toast("Select the text above to copy it");
+        }
+    };
+    return React.createElement("button", { className: "btn", onClick: copy },
+        React.createElement(Icon, { name: "copy", size: 16 }),
+        label);
+}
+// ─── John's walkthrough card (video + whiteboard) ──────────────────────
+function Walkthrough({ r, tall = false }) {
+    const [playing, setPlaying] = useState(false);
+    const [chapter, setChapter] = useState(0);
+    const john = person("john");
+    const [broken, setBroken] = useState(false);
+    const chapters = r.chapters.length ? r.chapters : [{ t: "—", label: "No walkthrough recorded" }];
+    const total = r.chapters.length ? `${Math.max(1, r.chapters.length)} min` : "None";
+    return (React.createElement("section", { className: "walk card" },
+        React.createElement("header", { className: "card-head" },
+            React.createElement("span", { className: "card-title" },
+                React.createElement(Icon, { name: "video" }),
+                " John\u2019s walkthrough of ",
+                r.name),
+            React.createElement("span", { className: "chip" }, total)),
+        React.createElement("div", { className: `walk-stage ${tall ? "walk-stage--tall" : ""}` },
+            React.createElement("button", { className: "walk-face", onClick: () => r.chapters.length && setPlaying(!playing), "aria-label": playing ? "Pause walkthrough" : "Play walkthrough", disabled: !r.chapters.length },
+                john.photo && !broken ? React.createElement("img", { src: john.photo, alt: "John Carter", onError: () => setBroken(true) }) : React.createElement("span", { className: "walk-initials" }, "JC"),
+                React.createElement("span", { className: "walk-play" },
+                    React.createElement(Icon, { name: playing ? "pause" : "play", size: 18 })),
+                playing && React.createElement("span", { className: "walk-progress" },
+                    React.createElement("i", { style: { width: `${((chapter + 1) / chapters.length) * 100}%` } }))),
+            React.createElement("div", { className: "whiteboard", "aria-label": "Whiteboard sketch" },
+                React.createElement("span", { className: "wb-title" },
+                    r.name.split("-")[0],
+                    " flow"),
+                React.createElement("div", { className: "wb-flow" }, r.whiteboard.flow.map((s, i) => (React.createElement("span", { key: s, className: "wb-step" },
+                    i > 0 && React.createElement("i", null, "\u2192"),
+                    React.createElement("b", null, s))))),
+                React.createElement("span", { className: "wb-sub" },
+                    r.whiteboard.remember.length,
+                    " things to remember:"),
+                React.createElement("ol", null, r.whiteboard.remember.map((s) => React.createElement("li", { key: s }, s))))),
+        playing && React.createElement("p", { className: "walk-caption", "aria-live": "polite" },
+            "\u201C",
+            chapters[chapter].label,
+            ".\u201D ",
+            React.createElement("span", { className: "muted" },
+                "\u2014 John, ",
+                chapters[chapter].t)),
+        React.createElement("ol", { className: "chapters" }, chapters.map((c, i) => (React.createElement("li", { key: c.t + c.label },
+            React.createElement("button", { className: i === chapter ? "active" : "", onClick: () => { setChapter(i); if (r.chapters.length)
+                    setPlaying(true); } },
+                React.createElement("span", { className: "mono" }, c.t),
+                c.label)))))));
+}
+const has = (q, ...words) => words.some((w) => q.includes(w));
+function answer(raw, ctxRepo) {
+    var _a, _b;
+    const q = raw.toLowerCase();
+    const r = repo(ctxRepo && has(q, "this", "here") ? ctxRepo : ctxRepo !== null && ctxRepo !== void 0 ? ctxRepo : "payments");
+    const iv = (t) => ({ label: `Interview ${t}`, kind: "interview", to: { v: "docs", o: { doc: "interview" } } });
+    const tk = (key, rid) => ({ label: key, kind: "ticket", to: { v: "repo", o: { repo: rid, tab: "jira" } } });
+    const dc = (id) => ({ label: docs.find((d) => d.id === id).title.split(":")[0], kind: "doc", to: { v: "docs", o: { doc: id } } });
+    const fl = (f, rid) => ({ label: f.split("/").pop(), kind: "file", to: { v: "repo", o: { repo: rid, tab: "health" } } });
+    if (has(q, "ttl", "24h", "72h"))
+        return { basis: "gap", text: "John didn't know. He said he inherited the 24h idempotency TTL and never confirmed it with the provider. The provider can resend webhooks for up to 72h, so there may be a window for duplicates. Maya is the right person to decide.", sources: [iv("09:40"), dc("adr-idem"), tk("PAY-322", "payments")], route: "maya", follow: ["What happens with duplicate webhooks?", "Who approves payments changes?"] };
+    if (has(q, "canada", "geo"))
+        return { basis: "gap", text: "Nobody knows yet. The geo-mismatch rule excludes Canada, but there is no ticket, comment or doc explaining why, and John couldn't remember. Priya owns fraud rule intent, so ask her before touching it.", sources: [iv("18:55"), fl("rules/config/velocity.yaml", "fraud")], route: "priya", follow: ["Can I change a fraud threshold?"] };
+    if (has(q, "retry", "retries"))
+        return { basis: "john", text: "Carefully. John capped retries at 3 after incident #4821, when 5 retries without idempotency keys double-charged 312 customers. His rule: only raise the cap once every payment call carries an idempotency key. His unfinished branch feat/retry-backoff-v2 has wrong jitter math, so don't build on it. Get a design review with Maya first (PAY-308).", sources: [tk("INC-4821", "payments"), { label: "John’s walkthrough 1:12", kind: "interview", to: { v: "repo", o: { repo: "payments" } } }, fl("payments/retry/RetryHandler.py", "payments"), dc("adr-retry")], route: "maya", follow: ["What's wrong with feat/retry-backoff-v2?", "Why is the idempotency TTL 24h?"] };
+    if (has(q, "idempot"))
+        return { basis: "john", text: "Every capture and refund sends an Idempotency-Key (merchant + order + attempt). The store keeps keys for 24h. The gateway must forward the header, so if you add a payments route, add it to the gateway allowlist too, or keys get dropped silently.", sources: [dc("adr-idem"), fl("payments/idempotency/store.py", "payments"), tk("PLAT-88", "api")], follow: ["Why is the idempotency TTL 24h?", "Can I change the retry logic?"] };
+    if (has(q, "webhook", "duplicate"))
+        return { basis: "john", text: "The provider resends events on 5xx and occasionally on 200. The consumer dedupes on event id, but only for 24h. PAY-322 is still open. SonarQube flags that the duplicate-event guard in consumer.py has no tests, so that's a good, safe place to add value.", sources: [tk("PAY-322", "payments"), fl("payments/webhooks/consumer.py", "payments"), iv("08:15")], follow: ["Why is the idempotency TTL 24h?"] };
+    if (has(q, "branch", "unfinished", "merge", "backoff"))
+        return { basis: "john", text: "John left 5 branches open. Don't merge feat/retry-backoff-v2 (jitter math is wrong). Finish chore/py312-upgrade (only the asyncpg pin blocked it). fix/rule-eval-sandbox in fraud-detection needs tests, then it closes two security findings. feat/fx-tolerance in reconciliation needs Zhuoning's review. Delete spike/ledger-events.", sources: [{ label: "Branches · payments-service", kind: "branch", to: { v: "repo", o: { repo: "payments", tab: "branches" } } }, iv("22:05")], follow: ["What should my first commit be?"] };
+    if (has(q, "recon", "fuzzy", "jpy", "currenc", "match"))
+        return { basis: "john", text: "reconciliation-engine is the highest knowledge risk: John wrote 76% of it. The trap is zero-decimal currencies (JPY, KRW). Naive rounding broke the nightly run three nights in a row (REC-40). When the DAG fails, read the DAG log before the code. The 72h matching window has no data behind it, which is an open question for Zhuoning.", sources: [tk("REC-40", "recon"), dc("rb-recon"), fl("matching/fuzzy_match.py", "recon"), iv("11:35")], route: "zhuoning", follow: ["Why is the fuzzy match window 72 hours?"] };
+    if (has(q, "72 hour", "window"))
+        return { basis: "gap", text: "Not answerable from John's knowledge. He said the 72h window “felt right at the time”. There's no data or ticket behind it. Zhuoning can pull settlement timing data to check.", sources: [iv("14:02")], route: "zhuoning", follow: [] };
+    if (has(q, "fraud", "threshold", "rule"))
+        return { basis: "john", text: "Fraud rules are YAML config, and every change is a production change. John's rule: never change a threshold without Ava, because model scores are not linear. Two rules have no recorded reason (including the Canada exclusion). SonarQube shows two vulnerabilities from eval() on config, and fix/rule-eval-sandbox fixes them once it has tests.", sources: [dc("guide-fraud"), tk("FRD-162", "fraud"), { label: "fix/rule-eval-sandbox", kind: "branch", to: { v: "repo", o: { repo: "fraud", tab: "branches" } } }], route: "ava", follow: ["Why does the geo rule exclude Canada?"] };
+    if (has(q, "ledger", "async", "lag", "delay", "kafka"))
+        return { basis: "john", text: "ledger-sync is asynchronous by design. Expect a few minutes of lag, and month-end batches are about 20× normal size. PAY-294 looked like a payments bug but the real cause was the batch timeout in ledger-sync (LDG-77).", sources: [tk("LDG-77", "ledger"), tk("PAY-294", "payments"), iv("06:30")], route: "zhuoning", follow: ["How do we replay events after a Kafka outage?"] };
+    if (has(q, "replay", "outage"))
+        return { basis: "gap", text: "John only remembered that “there's a script somewhere”. No doc or runbook covers replaying ledger events. This is a real gap. Ask Zhuoning, then write it down.", sources: [iv("16:10")], route: "zhuoning", follow: [] };
+    if (has(q, "first", "start", "begin", "commit", "work on"))
+        return { basis: "code", text: `Start with ${starters[0].key} in notification-service: “${starters[0].title}”. It's low risk (green quality gate, 88% coverage) and Prateek reviews within a day. After that, finishing John's Python 3.12 branch in payments-service is a meaningful second PR.`, sources: [tk(starters[0].key, "notification"), { label: "Quality gate · passed", kind: "sonar", to: { v: "repo", o: { repo: "notification", tab: "health" } } }], route: "prateek", follow: ["Can I change the retry logic?", "Which repo is riskiest?"] };
+    if (has(q, "risk", "danger", "fragile", "worried"))
+        return { basis: "code", text: "By knowledge risk: reconciliation-engine (76% John's code, failing quality gate), payments-service (64%, 3 open bugs in RetryHandler.py) and fraud-detection (41%, 2 vulnerabilities). user-service is a blind spot: never scanned and no owner.", sources: [{ label: "SonarQube · 6 repos", kind: "sonar", to: { v: "codebase" } }, iv("00:00")], follow: ["What do I need to know about reconciliation?", "Who owns user-service?"] };
+    if (has(q, "who", "owner", "ask", "contact"))
+        return { basis: "code", text: `For ${r.name}, ${person(r.interim).name} is the interim owner. ${r.contributors.filter((c) => c.id !== "john" && c.id !== r.interim).map((c) => person(c.id).name).join(" and ") || "Nobody else"} also commit${r.contributors.length > 2 ? "" : "s"} there. ${person(r.interim).fromJohn}`, sources: [{ label: "CODEOWNERS", kind: "file", to: { v: "repo", o: { repo: r.id } } }, iv("26:40")], route: r.interim, follow: ["What should my first commit be?"] };
+    if (has(q, "sonar", "coverage", "quality", "health", "bug"))
+        return { basis: "code", text: `${r.name}: quality gate ${r.sonar.gate.toLowerCase()}, ${r.sonar.coverage}% coverage, ${r.sonar.bugs} bugs, ${r.sonar.vulns} vulnerabilities, ${r.sonar.debt} of tech debt. The hottest file is ${(_b = (_a = r.sonar.files[0]) === null || _a === void 0 ? void 0 : _a.file) !== null && _b !== void 0 ? _b : "n/a"}.`, sources: [{ label: `SonarQube · ${r.name}`, kind: "sonar", to: { v: "repo", o: { repo: r.id, tab: "health" } } }], follow: ["Which repo is riskiest?"] };
+    if (has(q, "summar", "what did john", "changes", "recent"))
+        return { basis: "code", text: r.summary, sources: [{ label: `Jira trail · ${r.name}`, kind: "ticket", to: { v: "repo", o: { repo: r.id, tab: "jira" } } }], follow: ["What branches did John leave open?"] };
+    return { basis: "gap", text: `John didn't cover that in the interview, and I couldn't find it in the code, tickets or docs. I've logged it as an open question. ${person(r.interim).name} is the best person to ask for ${r.name}.`, sources: [], route: r.interim, follow: ["Can I change the retry logic?", "What should my first commit be?"] };
+}
+function BasisTag({ b }) {
+    const label = { john: "From John", code: "From code & tickets", gap: "Gap: John didn't know" }[b];
+    return React.createElement("span", { className: `basis basis--${b}` }, label);
+}
+function SourceChips({ sources }) {
+    const { go } = useApp();
+    const icon = { interview: "video", ticket: "ticket", doc: "note", file: "file", branch: "branch", sonar: "sonar" };
+    return (React.createElement("div", { className: "source-chips" }, sources.map((s) => (React.createElement("button", { key: s.label, onClick: () => s.to && go(s.to.v, s.to.o) },
+        React.createElement(Icon, { name: icon[s.kind], size: 15 }),
+        s.label)))));
+}
+function AnswerBubble({ a }) {
+    return (React.createElement("div", { className: "bubble bubble--agent" },
+        React.createElement("span", { className: "agent-mark", "aria-hidden": "true" },
+            React.createElement("i", null),
+            React.createElement("i", null),
+            React.createElement("i", null)),
+        React.createElement("div", { className: "bubble-body" },
+            React.createElement(BasisTag, { b: a.basis }),
+            React.createElement("p", null, a.text),
+            a.sources.length > 0 && React.createElement(SourceChips, { sources: a.sources }),
+            a.route && (React.createElement("div", { className: "route" },
+                React.createElement(Avatar, { id: a.route, size: 26 }),
+                React.createElement("span", null,
+                    a.basis === "gap" ? "Best person to ask" : "Confirm with",
+                    " ",
+                    React.createElement("b", null, person(a.route).name)),
+                React.createElement(TeamsButton, { id: a.route, compact: true }))))));
+}
+// Compact ask box used on repo pages: answers inline, scoped to a repo.
+function MiniAsk({ repoId, prompts }) {
+    const [q, setQ] = useState("");
+    const [asked, setAsked] = useState(null);
+    const { go } = useApp();
+    const submit = (value) => {
+        if (!value.trim())
+            return;
+        setAsked({ q: value, a: answer(value, repoId) });
+        setQ("");
+    };
+    return (React.createElement("section", { className: "mini-ask card" },
+        React.createElement("header", { className: "card-head" },
+            React.createElement("span", { className: "card-title" },
+                React.createElement("span", { className: "agent-mark agent-mark--sm", "aria-hidden": "true" },
+                    React.createElement("i", null),
+                    React.createElement("i", null),
+                    React.createElement("i", null)),
+                " Ask John\u2019s agent"),
+            React.createElement("button", { className: "link-btn", onClick: () => go("ask", { repo: repoId }) },
+                "Open full chat ",
+                React.createElement(Icon, { name: "arrow", size: 15 }))),
+        asked ? (React.createElement("div", { className: "mini-thread" },
+            React.createElement("div", { className: "bubble bubble--me" },
+                React.createElement(Avatar, { id: "me", size: 28 }),
+                React.createElement("p", null, asked.q)),
+            React.createElement(AnswerBubble, { a: asked.a }))) : (React.createElement("p", { className: "muted small" }, "Trained on John\u2019s 32-min exit interview, his commits, tickets and docs. It tells you when it doesn\u2019t know.")),
+        React.createElement("div", { className: "suggestions" }, (asked ? asked.a.follow : prompts).slice(0, 3).map((s) => React.createElement("button", { key: s, onClick: () => submit(s) }, s))),
+        React.createElement("form", { className: "ask-form", onSubmit: (e) => { e.preventDefault(); submit(q); } },
+            React.createElement("label", { className: "sr-only", htmlFor: `mini-${repoId}` },
+                "Ask about ",
+                repo(repoId).name),
+            React.createElement("input", { id: `mini-${repoId}`, value: q, onChange: (e) => setQ(e.target.value), placeholder: `Ask about ${repo(repoId).name}…` }),
+            React.createElement("button", { type: "submit", disabled: !q.trim(), "aria-label": "Send" },
+                React.createElement(Icon, { name: "send", size: 17 })))));
+}
+const allRepoIds = repos.map((r) => r.id);
+const everyone = people;
+// ---- screens.tsx
+/* Design principles used on every screen
+   1. One focal point per screen (hero video, architecture, office map, conversation).
+   2. 8px spacing grid, 16px card radius, cards share top and bottom edges.
+   3. Type scale: 34 / 20 / 15 / 13. Bold black headings, grey supporting text.
+   4. Color is pastel and carries meaning: mint = stable, yellow = needs review, rose = risk.
+   5. Show less. Every block answers one question; detail is one click away. */
+const tone = { Stable: "mint", "Needs review": "yellow", "High risk": "rose", Unknown: "violet" };
+const mapRepos = repos.filter((r) => r.id !== "users");
+function Photo({ className = "", alt }) {
+    const [broken, setBroken] = useState(false);
+    return broken ? React.createElement("span", { className: `photo-fallback ${className}` },
+        React.createElement("b", null, "JC")) : React.createElement("img", { className: className, src: JOHN_PHOTO, alt: alt, onError: () => setBroken(true) });
+}
+// Plays through caption lines while a video is "playing"
+function useCaptions(lines, playing, reset) {
+    const [i, setI] = useState(0);
+    useEffect(() => { setI(0); }, [reset, playing]);
+    useEffect(() => {
+        if (!playing)
+            return;
+        const id = window.setInterval(() => setI((n) => (n + 1) % lines.length), 3400);
+        return () => window.clearInterval(id);
+    }, [playing, lines.length]);
+    return i;
+}
+const introLines = [
+    "Hi, I’m John. I led payments backend here for three years.",
+    "Start with the payments flow. It connects most of the decisions I made.",
+    "Read past decisions before changing things.",
+    "When you’re stuck, ask the agent. It also knows what I didn’t.",
+];
+function Dot({ s }) {
+    return React.createElement("i", { className: `sdot sdot--${statusKey(s)}`, "aria-label": s });
+}
+// ─── Home ───────────────────────────────────────────────────────────────
+function HomeScreen() {
+    const { go } = useApp();
+    const [q, setQ] = useState("");
+    const [playing, setPlaying] = useState(false);
+    const line = useCaptions(introLines, playing, null);
+    const counts = ["Stable", "Needs review", "High risk", "Unknown"].map((s) => ({ s, n: repos.filter((r) => r.status === s).length }));
+    const chips = ["Show me his main project", "Where do I start?", "Key learnings"];
+    return (React.createElement("div", { className: "screen home" },
+        React.createElement("section", { className: "home-main" },
+            React.createElement("header", { className: "hello" },
+                React.createElement("h1", null, "Hi! I\u2019m the Last Commit agent"),
+                React.createElement("p", null, "I can help you explore John\u2019s work, answer questions, and point you to what matters.")),
+            React.createElement("button", { className: `hero ${playing ? "is-playing" : ""}`, onClick: () => setPlaying(!playing), "aria-label": playing ? "Pause John's intro" : "Watch John's intro" },
+                React.createElement(Photo, { className: "hero-img", alt: "John Carter at his desk" }),
+                !playing && React.createElement("span", { className: "hero-note" },
+                    "Read past",
+                    React.createElement("br", null),
+                    "decisions",
+                    React.createElement("br", null),
+                    "before",
+                    React.createElement("br", null),
+                    "changing",
+                    React.createElement("br", null),
+                    "things.",
+                    React.createElement("br", null),
+                    React.createElement("em", null, "\u2014 John")),
+                playing && React.createElement("span", { className: "caption", "aria-live": "polite", key: line }, introLines[line]),
+                React.createElement("span", { className: "play" },
+                    React.createElement("b", null,
+                        React.createElement(Icon, { name: playing ? "pause" : "play", size: 14 })),
+                    playing ? "Pause" : "Watch John’s 2-min intro"),
+                playing && React.createElement("span", { className: "progress" },
+                    React.createElement("i", { style: { width: `${((line + 1) / introLines.length) * 100}%` } }))),
+            React.createElement("div", { className: "prompt" },
+                React.createElement("div", { className: "prompt-q" },
+                    React.createElement("span", { className: "bot", "aria-hidden": "true" },
+                        React.createElement("i", null),
+                        React.createElement("i", null)),
+                    React.createElement("p", null, "What would you like to explore first?")),
+                React.createElement("div", { className: "chips" }, chips.map((c) => React.createElement("button", { key: c, onClick: () => go("ask", { q: c }) }, c))),
+                React.createElement("form", { className: "ask-bar", onSubmit: (e) => { e.preventDefault(); if (q.trim())
+                        go("ask", { q: q.trim() }); } },
+                    React.createElement("label", { className: "sr-only", htmlFor: "home-ask" }, "Ask anything about John\u2019s work"),
+                    React.createElement("input", { id: "home-ask", value: q, onChange: (e) => setQ(e.target.value), placeholder: "Ask anything about John\u2019s work\u2026" }),
+                    React.createElement("button", { type: "submit", "aria-label": "Ask" },
+                        React.createElement(Icon, { name: "arrow", size: 18 }))))),
+        React.createElement("aside", { className: "home-side" },
+            React.createElement("section", { className: "panel" },
+                React.createElement("header", { className: "panel-head" },
+                    React.createElement("h2", null, "John\u2019s Repositories"),
+                    React.createElement("button", { className: "see", onClick: () => go("repo") },
+                        "See all ",
+                        React.createElement(Icon, { name: "arrow", size: 14 }))),
+                React.createElement("ul", { className: "repo-list" }, mapRepos.slice(0, 5).map((r) => {
+                    var _a;
+                    return (React.createElement("li", { key: r.id },
+                        React.createElement("button", { onClick: () => go("repo", { repo: r.id }) },
+                            React.createElement(Icon, { name: "github", size: 22 }),
+                            React.createElement("span", null,
+                                React.createElement("strong", null, r.name),
+                                React.createElement("small", null, ((_a = layout[r.id]) === null || _a === void 0 ? void 0 : _a.sub) || "Core payments processing")),
+                            React.createElement(Dot, { s: r.status }))));
+                }))),
+            React.createElement("section", { className: "panel" },
+                React.createElement("header", { className: "panel-head" },
+                    React.createElement("h2", null,
+                        React.createElement("span", { className: "bars", "aria-hidden": "true" },
+                            React.createElement("i", null),
+                            React.createElement("i", null),
+                            React.createElement("i", null)),
+                        "Codebase Health")),
+                React.createElement("div", { className: "health-bar" }, counts.map((c) => React.createElement("i", { key: c.s, className: `hb--${statusKey(c.s)}`, style: { flex: c.n } }))),
+                React.createElement("ul", { className: "health-list" }, counts.map((c) => (React.createElement("li", { key: c.s },
+                    React.createElement(Dot, { s: c.s }),
+                    React.createElement("span", null, c.s),
+                    React.createElement("small", null,
+                        c.n,
+                        " ",
+                        c.n === 1 ? "repo" : "repos"),
+                    React.createElement("small", null,
+                        Math.round((c.n / repos.length) * 100),
+                        "%")))))),
+            React.createElement(UpNext, { view: "home", compact: true }))));
+}
+// ─── Architecture (isometric) ───────────────────────────────────────────
+const layout = {
+    api: { x: 170, y: 150, label: "right", sub: "External requests" },
+    fraud: { x: 470, y: 105, label: "right", sub: "Risk scoring" },
+    ledger: { x: 720, y: 215, label: "right", sub: "Bank synchronization" },
+    payments: { x: 440, y: 300, label: "right", sub: "" },
+    notification: { x: 160, y: 390, label: "below", sub: "Email & SMS" },
+    recon: { x: 640, y: 440, label: "right", sub: "Transaction matching" },
+};
+const flows = [
+    { from: "api", to: "payments", kind: "request" },
+    { from: "payments", to: "api", kind: "data" },
+    { from: "payments", to: "fraud", kind: "request" },
+    { from: "payments", to: "ledger", kind: "async" },
+    { from: "payments", to: "notification", kind: "async" },
+    { from: "notification", to: "payments", kind: "data" },
+    { from: "payments", to: "recon", kind: "async" },
+    { from: "recon", to: "payments", kind: "request" },
+];
+function CubeShape({ t, y = 0 }) {
+    return (React.createElement("g", { transform: `translate(0 ${y})` },
+        React.createElement("path", { className: "cube-face", fill: `url(#${t}-l)`, stroke: `url(#${t}-l)`, d: "M-44-18 0 7 0 46-44 21z" }),
+        React.createElement("path", { className: "cube-face", fill: `url(#${t}-r)`, stroke: `url(#${t}-r)`, d: "M44-18 0 7 0 46 44 21z" }),
+        React.createElement("path", { className: "cube-face", fill: `url(#${t}-t)`, stroke: `url(#${t}-t)`, d: "M-44-18 0-43 44-18 0 7z" })));
+}
+const lensTone = (r, l) => l === "health" ? tone[r.status]
+    : l === "knowledge" ? (r.johnPct >= 60 ? "rose" : r.johnPct >= 30 ? "yellow" : "mint")
+        : (r.sonar.coverage >= 80 ? "mint" : r.sonar.coverage >= 60 ? "yellow" : "rose");
+const lensKey = {
+    health: "Green is stable, yellow needs review, red is risky.",
+    knowledge: "Red means John wrote most of it. Only he really knew it.",
+    coverage: "Green is well tested, red is under 60% coverage.",
+};
+function Architecture({ sel, onSelect, lens }) {
+    const gradients = [
+        ["mint", "#d9f8e8", "#9fe3c0", "#5fc796"],
+        ["yellow", "#fff1c4", "#f8d77c", "#e8b744"],
+        ["rose", "#ffdfe1", "#f8aab1", "#e47d88"],
+    ];
+    const at = (id) => layout[id];
+    return (React.createElement("svg", { className: "arch", viewBox: "100 40 860 500", role: "img", "aria-label": "Service architecture" },
+        React.createElement("defs", null,
+            gradients.map(([t, a, b, c]) => (React.createElement("g", { key: t },
+                React.createElement("linearGradient", { id: `${t}-t`, x1: "0", y1: "0", x2: "1", y2: "1" },
+                    React.createElement("stop", { offset: "0", stopColor: "#ffffff" }),
+                    React.createElement("stop", { offset: "1", stopColor: a })),
+                React.createElement("linearGradient", { id: `${t}-l`, x1: "0", y1: "0", x2: "0", y2: "1" },
+                    React.createElement("stop", { offset: "0", stopColor: b }),
+                    React.createElement("stop", { offset: "1", stopColor: a })),
+                React.createElement("linearGradient", { id: `${t}-r`, x1: "0", y1: "0", x2: "0", y2: "1" },
+                    React.createElement("stop", { offset: "0", stopColor: c }),
+                    React.createElement("stop", { offset: "1", stopColor: b }))))),
+            React.createElement("radialGradient", { id: "glow" },
+                React.createElement("stop", { offset: "0", stopColor: "#c9f3dd", stopOpacity: ".8" }),
+                React.createElement("stop", { offset: "1", stopColor: "#c9f3dd", stopOpacity: "0" })),
+            React.createElement("radialGradient", { id: "glow-y" },
+                React.createElement("stop", { offset: "0", stopColor: "#ffeeb8", stopOpacity: ".6" }),
+                React.createElement("stop", { offset: "1", stopColor: "#ffeeb8", stopOpacity: "0" })),
+            ["request", "data", "async"].map((k) => (React.createElement("marker", { key: k, id: `m-${k}`, viewBox: "0 0 10 10", refX: "7", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" },
+                React.createElement("path", { d: "M1 1 8 5 1 9", className: `mk mk--${k}` }))))),
+        React.createElement("ellipse", { cx: "460", cy: "300", rx: "230", ry: "150", fill: "url(#glow)" }),
+        React.createElement("ellipse", { cx: "760", cy: "200", rx: "140", ry: "90", fill: "url(#glow-y)" }),
+        flows.map((f, i) => {
+            const a = at(f.from), b = at(f.to);
+            const back = flows.some((g) => g.from === f.to && g.to === f.from) && f.from > f.to ? 14 : 0;
+            const ax = a.x + (b.x - a.x) * 0.16, ay = a.y + (b.y - a.y) * 0.16 + back;
+            const bx = b.x - (b.x - a.x) * 0.16, by = b.y - (b.y - a.y) * 0.16 + back;
+            const mx = (ax + bx) / 2, my = (ay + by) / 2 - 30 + back;
+            return React.createElement("path", { key: i, className: `flow flow--${f.kind}`, d: `M${ax} ${ay} Q${mx} ${my} ${bx} ${by}`, markerEnd: `url(#m-${f.kind})` });
+        }),
+        mapRepos.map((r) => {
+            const p = at(r.id);
+            const t = lensTone(r, lens);
+            const active = sel === r.id;
+            return (React.createElement("g", { key: r.id, className: `node ${active ? "is-active" : ""}`, transform: `translate(${p.x} ${p.y})`, role: "button", tabIndex: 0, "aria-label": r.name, onClick: () => onSelect(r.id), onKeyDown: (e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onSelect(r.id)) },
+                React.createElement("ellipse", { cx: "0", cy: "52", rx: "54", ry: "16", className: "node-shadow" }),
+                r.id === "payments" && React.createElement(CubeShape, { t: t, y: 26 }),
+                React.createElement(CubeShape, { t: t }),
+                React.createElement("path", { d: "M-17-18 0-27.5 17-18 0-8.5z", className: "glyph" }),
+                React.createElement("path", { d: "M-6-18 0-21.5 6-18 0-14.5z", className: "glyph glyph--fill" }),
+                lens === "health" && r.status !== "Stable" && (React.createElement("g", { transform: "translate(46 -42)" },
+                    React.createElement("circle", { r: "10", className: `badge badge--${statusKey(r.status)}` }),
+                    React.createElement("text", { y: "4", textAnchor: "middle", className: "badge-t" }, "!"))),
+                p.label === "right" ? (React.createElement("g", { transform: r.id === "payments" ? "translate(58 40)" : "translate(62 -12)" }, r.id === "payments" ? React.createElement(React.Fragment, null,
+                    React.createElement("rect", { x: "-6", y: "-19", width: "196", height: "38", rx: "19", className: "pill-bg" }),
+                    React.createElement("text", { x: "92", y: "6", textAnchor: "middle", className: "n-name" }, r.name)) : React.createElement(React.Fragment, null,
+                    React.createElement("text", { className: "n-name" }, r.name),
+                    React.createElement("text", { y: "18", className: "n-sub" }, p.sub)))) : (React.createElement("g", { transform: "translate(-10 82)" },
+                    React.createElement("text", { className: "n-name" }, r.name),
+                    React.createElement("text", { y: "18", className: "n-sub" }, p.sub)))));
+        })));
+}
+// ─── Repositories ───────────────────────────────────────────────────────
+const tabs = [
+    { id: "architecture", label: "Architecture" },
+    { id: "decisions", label: "Key decisions" },
+    { id: "incidents", label: "Recent incidents" },
+];
+function Walkthrough({ r }) {
+    const [playing, setPlaying] = useState(false);
+    useEffect(() => { setPlaying(false); }, [r.id]);
+    const lines = r.chapters.length ? r.chapters.map((c) => c.label) : r.whiteboard.remember;
+    const line = useCaptions(lines, playing, r.id);
+    return (React.createElement("section", { className: "panel walk" },
+        React.createElement("header", { className: "panel-head" },
+            React.createElement("h2", null,
+                React.createElement("span", { className: "cam", "aria-hidden": "true" },
+                    React.createElement(Icon, { name: "video", size: 16 })),
+                "John\u2019s walkthrough"),
+            React.createElement("span", { className: "time" },
+                React.createElement(Icon, { name: "play", size: 10 }),
+                " ",
+                Math.max(2, r.chapters.length),
+                " min")),
+        React.createElement("button", { className: "walk-media", onClick: () => setPlaying(!playing), "aria-label": playing ? "Pause" : "Play walkthrough" },
+            React.createElement("span", { className: "board" },
+                React.createElement("b", null,
+                    r.name.split("-")[0],
+                    " flow"),
+                React.createElement("span", { className: "board-flow" }, r.whiteboard.flow.map((s, i) => React.createElement("span", { key: s },
+                    i > 0 && "→",
+                    React.createElement("em", null, s)))),
+                React.createElement("span", null,
+                    r.whiteboard.remember.length,
+                    " things to remember:"),
+                React.createElement("ol", null, r.whiteboard.remember.map((s) => React.createElement("li", { key: s }, s)))),
+            React.createElement("span", { className: "walk-play" },
+                React.createElement(Icon, { name: playing ? "pause" : "play", size: 16 })),
+            playing && React.createElement("span", { className: "caption caption--sm", "aria-live": "polite", key: line }, lines[line]),
+            playing && React.createElement("span", { className: "progress" },
+                React.createElement("i", { style: { width: `${((line + 1) / lines.length) * 100}%` } })))));
+}
+// SonarQube — hardcoded scan results from data.ts (repo.sonar)
+function SonarPanel({ r }) {
+    const s = r.sonar;
+    const C = 2 * Math.PI * 34;
+    const ratingTone = (v) => (v === "A" ? "mint" : v === "B" ? "mint" : v === "C" ? "yellow" : v === "—" ? "plain" : "rose");
+    return (React.createElement("section", { className: "panel sonar" },
+        React.createElement("header", { className: "panel-head" },
+            React.createElement("h2", null, "Code quality"),
+            React.createElement("span", { className: "source" },
+                React.createElement("i", { className: "src-dot src-dot--sonar" }),
+                "SonarQube \u00B7 ",
+                s.scanned === "Never" ? "not scanned" : `scanned ${s.scanned}`)),
+        React.createElement("div", { className: "sonar-body" },
+            React.createElement("div", { className: "ring-wrap" },
+                React.createElement("svg", { viewBox: "0 0 84 84", className: "cov-ring", role: "img", "aria-label": `${s.coverage}% test coverage` },
+                    React.createElement("circle", { cx: "42", cy: "42", r: "34", className: "cov-track" }),
+                    React.createElement("circle", { cx: "42", cy: "42", r: "34", className: `cov-val cov-val--${s.coverage >= 80 ? "good" : s.coverage >= 60 ? "ok" : "low"}`, strokeDasharray: `${(s.coverage / 100) * C} ${C}`, transform: "rotate(-90 42 42)" }),
+                    React.createElement("text", { x: "42", y: "44", textAnchor: "middle", className: "cov-num" }, s.coverage ? `${Math.round(s.coverage)}%` : "—"),
+                    React.createElement("text", { x: "42", y: "57", textAnchor: "middle", className: "cov-lbl" }, "coverage")),
+                React.createElement("span", { className: `gate gate--${s.gate === "Passed" ? "pass" : "fail"}` },
+                    s.gate === "Passed" ? React.createElement(Icon, { name: "check", size: 13 }) : "!",
+                    " Quality gate ",
+                    s.gate.toLowerCase())),
+            React.createElement("div", { className: "ratings" }, [["Reliability", s.reliability], ["Security", s.security], ["Maintainability", s.maintainability]].map(([k, v]) => (React.createElement("div", { key: k, className: "rating" },
+                React.createElement("b", { className: `grade grade--${ratingTone(v)}` }, v),
+                React.createElement("span", null, k)))))),
+        React.createElement("dl", { className: "sonar-stats" },
+            React.createElement("div", null,
+                React.createElement("dt", null, "Bugs"),
+                React.createElement("dd", { className: s.bugs ? "bad" : "" }, s.bugs)),
+            React.createElement("div", null,
+                React.createElement("dt", null, "Vulnerabilities"),
+                React.createElement("dd", { className: s.vulns ? "bad" : "" }, s.vulns)),
+            React.createElement("div", null,
+                React.createElement("dt", null, "Code smells"),
+                React.createElement("dd", null, s.smells)),
+            React.createElement("div", null,
+                React.createElement("dt", null, "Tech debt"),
+                React.createElement("dd", null, s.debt)))));
+}
+// Jira — latest tickets for this repo, newest first (hardcoded in data.ts)
+function JiraPanel({ r }) {
+    const { go } = useApp();
+    const latest = [...r.jira].reverse().slice(0, 5);
+    return (React.createElement("section", { className: "panel jira" },
+        React.createElement("header", { className: "panel-head" },
+            React.createElement("h2", null, "Latest changes"),
+            React.createElement("span", { className: "source" },
+                React.createElement("i", { className: "src-dot src-dot--jira" }),
+                "Jira")),
+        React.createElement("ul", { className: "tickets" }, latest.map((t) => {
+            const owner = t.status === "Done" || t.status === "Won't do" ? "john" : r.interim;
+            return (React.createElement("li", { key: t.key },
+                React.createElement("span", { className: `ttype ttype--${t.type.replace(" ", "").toLowerCase()}`, title: t.type }),
+                React.createElement("span", { className: "tkey" }, t.key),
+                React.createElement("span", { className: "ttitle" }, t.title),
+                React.createElement("span", { className: `tstatus tstatus--${t.status.replace(/[^a-z]/gi, "").toLowerCase()}` }, t.status),
+                React.createElement(Avatar, { id: owner, size: 26 })));
+        })),
+        React.createElement("button", { className: "see see--blue", onClick: () => go("repo", { repo: r.id, tab: "incidents" }) },
+            "See incidents ",
+            React.createElement(Icon, { name: "arrow", size: 14 }))));
+}
+function AskSnippet({ r }) {
+    const { go } = useApp();
+    const q = r.id === "payments" ? "Can I change the retry logic?" : `Who should I ask about ${r.name}?`;
+    const a = answer(q, r.id);
+    const short = a.text.split(/(?<=\.)\s/).slice(0, 2).join(" ");
+    return (React.createElement("section", { className: "panel snippet" },
+        React.createElement("div", { className: "me-q" },
+            React.createElement(Avatar, { id: "me", size: 36 }),
+            React.createElement("p", null, q)),
+        React.createElement("div", { className: "bot-a" },
+            React.createElement("span", { className: "bot", "aria-hidden": "true" },
+                React.createElement("i", null),
+                React.createElement("i", null)),
+            React.createElement("p", null, short)),
+        React.createElement("div", { className: "src" }, a.sources.slice(0, 3).map((s) => React.createElement("button", { key: s.label, onClick: () => go("ask", { repo: r.id, q }) },
+            React.createElement(Icon, { name: s.kind === "interview" ? "play" : s.kind === "ticket" ? "ticket" : "file", size: 13 }),
+            s.label)))));
+}
+function RepoScreen() {
+    const { repoId, tab, go } = useApp();
+    const r = repo(repoId === "users" ? "payments" : repoId);
+    const t = tabs.some((x) => x.id === tab) ? tab : tab === "jira" ? "incidents" : "architecture";
+    const askPeople = r.contributors.filter((c) => c.id !== "john").map((c) => c.id);
+    const incidents = r.jira.filter((j) => j.type === "Incident" || j.type === "Bug");
+    const [lens, setLens] = useState("health");
+    const decisions = docs.filter((d) => d.repo === r.id && (d.kind === "Decision" || d.kind === "Postmortem"));
+    return (React.createElement("div", { className: "screen repo" },
+        React.createElement("header", { className: "repo-head" },
+            React.createElement(Icon, { name: "github", size: 44, className: "gh" }),
+            React.createElement("div", { className: "repo-id" },
+                React.createElement("div", { className: "repo-name" },
+                    React.createElement("h1", null, r.name),
+                    React.createElement("span", { className: `pill pill--${statusKey(r.status)}` },
+                        React.createElement("i", null),
+                        r.status)),
+                React.createElement("p", null, r.description.split(":")[0].split(",")[0])),
+            React.createElement("div", { className: "ask-people", "aria-label": "People to ask" },
+                React.createElement("span", null, "Ask"),
+                askPeople.map((id) => React.createElement("button", { key: id, onClick: () => go("team", { person: id }), title: person(id).name },
+                    React.createElement(Avatar, { id: id, size: 32 })))),
+            React.createElement("label", { className: "branch" },
+                React.createElement("span", { className: "sr-only" }, "Branch"),
+                React.createElement("select", { id: "branch", defaultValue: "main" }, r.branches.map((b) => React.createElement("option", { key: b.name }, b.name))),
+                React.createElement(Icon, { name: "chevron", size: 16 })),
+            React.createElement("a", { className: "gh-btn", href: "https://github.com/", target: "_blank", rel: "noreferrer" },
+                "Open in GitHub ",
+                React.createElement(Icon, { name: "ext", size: 16 }))),
+        React.createElement("nav", { className: "tabs", role: "tablist" }, tabs.map((x) => React.createElement("button", { key: x.id, role: "tab", "aria-selected": t === x.id, className: t === x.id ? "active" : "", onClick: () => go("repo", { repo: r.id, tab: x.id }) }, x.label))),
+        t === "architecture" && (React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "repo-top" },
+                React.createElement("section", { className: "panel arch-panel" },
+                    React.createElement("div", { className: "legend" },
+                        React.createElement("span", null,
+                            React.createElement("i", { className: "lg lg--request" }),
+                            "Request flow"),
+                        React.createElement("span", null,
+                            React.createElement("i", { className: "lg lg--data" }),
+                            "Data flow"),
+                        React.createElement("span", null,
+                            React.createElement("i", { className: "lg lg--async" }),
+                            "Async event")),
+                    React.createElement("div", { className: "lens", role: "tablist", "aria-label": "Color the map by" }, [["health", "Health"], ["knowledge", "John’s knowledge"], ["coverage", "Test coverage"]].map(([id, label]) => (React.createElement("button", { key: id, role: "tab", "aria-selected": lens === id, className: lens === id ? "active" : "", onClick: () => setLens(id) }, label)))),
+                    React.createElement(Architecture, { sel: r.id, lens: lens, onSelect: (id) => go("repo", { repo: id, tab: "architecture" }) }),
+                    React.createElement("p", { className: "arch-hint" },
+                        lensKey[lens],
+                        " Click a service to explore it.")),
+                React.createElement("div", { className: "repo-side" },
+                    React.createElement(Walkthrough, { r: r }),
+                    React.createElement("section", { className: "panel takeaways" },
+                        React.createElement("h2", null,
+                            React.createElement("span", { className: "sun", "aria-hidden": "true" }),
+                            "John\u2019s key takeaways"),
+                        React.createElement("ul", null, r.takeaways.slice(0, 4).map((x) => React.createElement("li", { key: x }, x)))))),
+            React.createElement("div", { className: "repo-bottom" },
+                React.createElement(SonarPanel, { r: r }),
+                React.createElement(JiraPanel, { r: r })))),
+        t === "decisions" && (React.createElement("div", { className: "cards3" }, (decisions.length ? decisions.map((d) => ({ title: d.title, body: d.summary, foot: d.updated })) : r.takeaways.map((x, i) => ({ title: `Decision ${i + 1}`, body: x, foot: "From John’s interview" }))).map((d) => (React.createElement("article", { key: d.title, className: "panel decision" },
+            React.createElement("span", { className: "decision-icon", "aria-hidden": "true" },
+                React.createElement(Icon, { name: "bulb", size: 20 })),
+            React.createElement("h2", null, d.title),
+            React.createElement("p", null, d.body),
+            React.createElement("small", null, d.foot)))))),
+        t === "incidents" && (incidents.length ? (React.createElement("div", { className: "incidents" }, incidents.map((j) => (React.createElement("article", { key: j.key, className: "panel incident" },
+            React.createElement("div", { className: "inc-meta" },
+                React.createElement("span", { className: `inc-tag ${j.type === "Incident" ? "is-inc" : ""}` }, j.type),
+                React.createElement("small", null,
+                    j.key,
+                    " \u00B7 ",
+                    j.month)),
+            React.createElement("h2", null, j.title),
+            j.johnNote && React.createElement("blockquote", null,
+                React.createElement(Avatar, { id: "john", size: 28 }),
+                React.createElement("p", null,
+                    "\u201C",
+                    j.johnNote,
+                    "\u201D"))))))) : React.createElement("section", { className: "panel empty" },
+            React.createElement("span", { className: "empty-icon" },
+                React.createElement(Icon, { name: "check", size: 22 })),
+            React.createElement("h2", null, "No incidents"),
+            React.createElement("p", null,
+                r.name,
+                " has been quiet. Nothing to worry about here.")))));
+}
+// ─── Notes ──────────────────────────────────────────────────────────────
+const noteTone = { Decision: "blue", Runbook: "yellow", Postmortem: "rose", Guide: "mint", Interview: "violet" };
+function NotesScreen() {
+    const { go } = useApp();
+    const rest = docs.filter((d) => d.id !== "interview").slice(0, 6);
+    return (React.createElement("div", { className: "screen narrow" },
+        React.createElement("header", { className: "title" },
+            React.createElement("h1", null, "John\u2019s Notes"),
+            React.createElement("p", null, "Decisions, runbooks and the story behind the code.")),
+        React.createElement("button", { className: "feature", onClick: () => go("ask") },
+            React.createElement("span", { className: "feature-img" },
+                React.createElement(Photo, { alt: "John during his exit interview" })),
+            React.createElement("span", { className: "feature-body" },
+                React.createElement("span", { className: "kicker" }, "Exit interview"),
+                React.createElement("strong", null,
+                    "Everything John wanted you to know, in ",
+                    interview.minutes,
+                    " minutes"),
+                React.createElement("span", { className: "feature-stats" },
+                    React.createElement("span", null,
+                        React.createElement("b", null, interview.facts),
+                        " facts"),
+                    React.createElement("span", null,
+                        React.createElement("b", null, interview.questions),
+                        " open questions"),
+                    React.createElement("span", null,
+                        React.createElement("b", null, "7"),
+                        " chapters")),
+                React.createElement("span", { className: "feature-cta" },
+                    "Ask about it ",
+                    React.createElement(Icon, { name: "arrow", size: 16 })))),
+        React.createElement("div", { className: "notes" }, rest.map((d) => (React.createElement("article", { key: d.id, className: "panel note" },
+            React.createElement("span", { className: `note-icon tint--${noteTone[d.kind]}`, "aria-hidden": "true" },
+                React.createElement(Icon, { name: d.kind === "Runbook" ? "tool" : d.kind === "Postmortem" ? "alert" : d.kind === "Guide" ? "note" : "bulb", size: 20 })),
+            React.createElement("small", { className: "kind" }, d.kind),
+            React.createElement("h2", null, d.title.replace(/^ADR-\d+: /, "")),
+            React.createElement("p", null, d.summary),
+            React.createElement("small", { className: "date" }, d.updated)))))));
+}
+// ─── Tools ──────────────────────────────────────────────────────────────
+const tools = [
+    { name: "GitHub", kind: "Code & reviews", tip: "Small PRs. Maya reviews payments.", tint: "violet", mono: "Gh" },
+    { name: "Jira", kind: "Tickets", tip: "Every incident gets a ticket.", tint: "blue", mono: "Ji" },
+    { name: "SonarQube", kind: "Code health", tip: "The gate blocks merges. Respect it.", tint: "mint", mono: "Sq" },
+    { name: "Datadog", kind: "Monitoring", tip: "Watch “Payments golden signals”.", tint: "violet", mono: "Dd" },
+    { name: "Docker", kind: "Local stack", tip: "Compose, not minikube.", tint: "blue", mono: "Dk" },
+    { name: "Vault", kind: "Secrets", tip: "Request it on day one.", tint: "yellow", mono: "Va" },
+    { name: "Kafka", kind: "Events", tip: "Ledger events lag a few minutes.", tint: "rose", mono: "Ka" },
+    { name: "PostgreSQL", kind: "Database", tip: "Idempotency keys live here.", tint: "mint", mono: "Pg" },
+];
+const ship = ["Branch", "Pull request", "Quality gate", "Staging", "Production"];
+function ToolsScreen() {
+    return (React.createElement("div", { className: "screen narrow" },
+        React.createElement("header", { className: "title" },
+            React.createElement("h1", null, "John\u2019s Tools"),
+            React.createElement("p", null, "The eight tools he used every day, and one tip for each.")),
+        React.createElement("div", { className: "tools" }, tools.map((t) => (React.createElement("article", { key: t.name, className: "panel tool" },
+            React.createElement("span", { className: `tool-mark tint--${t.tint}`, "aria-hidden": "true" }, t.mono),
+            React.createElement("h2", null, t.name),
+            React.createElement("small", null, t.kind),
+            React.createElement("p", null, t.tip))))),
+        React.createElement("section", { className: "panel ship" },
+            React.createElement("h2", null, "How code ships"),
+            React.createElement("ol", null, ship.map((s, i) => React.createElement("li", { key: s, className: i === 2 ? "is-gate" : "" },
+                React.createElement("span", null, i + 1),
+                s))))));
+}
+// ─── Team (floor plan) ──────────────────────────────────────────────────
+const rooms = [
+    { id: "infra", label: "Infrastructure", x: 20, y: 20, w: 300, h: 196, tint: "violet" },
+    { id: "product", label: "Product", x: 20, y: 228, w: 300, h: 176, tint: "rose" },
+    { id: "data", label: "Data & Risk", x: 20, y: 416, w: 300, h: 184, tint: "yellow" },
+    { id: "payments", label: "Payments", x: 332, y: 20, w: 436, h: 384, tint: "mint" },
+    { id: "meeting", label: "Meeting room", x: 780, y: 20, w: 200, h: 220, tint: "plain" },
+    { id: "focus", label: "Focus room", x: 780, y: 252, w: 200, h: 152, tint: "plain" },
+    { id: "lounge", label: "Lounge & kitchen", x: 332, y: 416, w: 648, h: 184, tint: "plain" },
+];
+const seats = [
+    { id: "alex", x: 170, y: 140 },
+    { id: "priya", x: 170, y: 335 },
+    { id: "zhuoning", x: 105, y: 525 },
+    { id: "ava", x: 235, y: 525 },
+    { id: "maya", x: 440, y: 160 },
+    { id: "john", x: 550, y: 160 },
+    { id: "prateek", x: 660, y: 160 },
+    { id: "me", x: 550, y: 320 },
+];
+const hueFill = {
+    mint: ["#d3f2e2", "#17694a"], blue: ["#dae7ff", "#2453a3"], violet: ["#e4ddff", "#5640b8"], rose: ["#ffdfe2", "#b42335"], yellow: ["#ffefc2", "#8a6209"],
+};
+function Seat({ id, selected, onSelect }) {
+    const s = seats.find((x) => x.id === id);
+    const p = person(id);
+    const [bg, fg] = hueFill[p.hue];
+    const left = p.presence === "left";
+    const you = p.presence === "you";
+    const [broken, setBroken] = useState(false);
+    return (React.createElement("g", { className: `seat ${selected ? "is-sel" : ""} ${left ? "is-left" : ""}`, transform: `translate(${s.x} ${s.y})`, role: "button", tabIndex: 0, "aria-label": p.name, onClick: onSelect, onKeyDown: (e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onSelect()) },
+        React.createElement("rect", { x: "-48", y: "-66", width: "96", height: "36", rx: "7", className: "desk" }),
+        React.createElement("rect", { x: "-16", y: "-60", width: "32", height: "5", rx: "2.5", className: "screen-bar" }),
+        (left || you) && React.createElement("rect", { x: "-58", y: "-74", width: "116", height: "148", rx: "16", className: left ? "outline outline--left" : "outline outline--you" }),
+        React.createElement("circle", { r: "27", className: "ring" }),
+        React.createElement("circle", { r: "23", fill: bg }),
+        React.createElement("text", { y: "6", textAnchor: "middle", className: "ini", fill: fg }, p.initials),
+        p.photo && !broken && (React.createElement(React.Fragment, null,
+            React.createElement("clipPath", { id: `clip-${id}` },
+                React.createElement("circle", { r: "23" })),
+            React.createElement("image", { href: p.photo, x: "-23", y: "-23", width: "46", height: "46", clipPath: `url(#clip-${id})`, preserveAspectRatio: "xMidYMid slice", className: left ? "faded" : "", onError: () => setBroken(true) }))),
+        !you && !left && React.createElement("circle", { cx: "17", cy: "17", r: "6", className: `pres pres--${p.presence}` }),
+        React.createElement("text", { y: "44", textAnchor: "middle", className: "seat-name" }, left ? "John’s desk" : you ? "Your desk" : p.name.split(" ")[0]),
+        React.createElement("text", { y: "60", textAnchor: "middle", className: "seat-role" }, left ? "Empty since Oct 1" : you ? "Next to Maya" : p.role.split(" ")[0] === "Payments" ? p.role.replace("Payments ", "") : p.role.split(" &")[0])));
+}
+function Plant({ x, y, r = 12 }) {
+    return React.createElement("g", { transform: `translate(${x} ${y})` },
+        React.createElement("circle", { r: r + 4, className: "pot" }),
+        React.createElement("circle", { r: r, className: "leaf" }),
+        React.createElement("circle", { cx: -r / 3, cy: -r / 3, r: r / 2.2, className: "leaf-hi" }));
+}
+function TeamScreen() {
+    const { personId } = useApp();
+    const [sel, setSel] = useState(personId || "maya");
+    useEffect(() => { if (personId)
+        setSel(personId); }, [personId]);
+    const p = person(sel);
+    const knows = repos.filter((r) => r.contributors.some((c) => c.id === p.id)).map((r) => r.name);
+    return (React.createElement("div", { className: "screen team" },
+        React.createElement("header", { className: "title" },
+            React.createElement("h1", null, "Team"),
+            React.createElement("p", null, "Who worked with John, where they sit, and who to reach out to.")),
+        React.createElement("div", { className: "team-grid" },
+            React.createElement("section", { className: "plan-wrap", "aria-label": "Office floor plan" },
+                React.createElement("svg", { className: "plan", viewBox: "0 0 1000 620" },
+                    React.createElement("rect", { x: "6", y: "6", width: "988", height: "608", rx: "22", className: "floor" }),
+                    rooms.map((r) => (React.createElement("g", { key: r.id },
+                        React.createElement("rect", { x: r.x, y: r.y, width: r.w, height: r.h, rx: "14", className: `room room--${r.tint}` }),
+                        React.createElement("text", { x: r.x + 20, y: r.y + 32, className: `room-label room-label--${r.tint}` }, r.label)))),
+                    React.createElement("ellipse", { cx: "880", cy: "140", rx: "56", ry: "34", className: "table" }),
+                    [[-52, -46], [0, -52], [52, -46], [-52, 46], [0, 52], [52, 46]].map(([dx, dy], i) => React.createElement("circle", { key: i, cx: 880 + dx, cy: 140 + dy, r: "10", className: "chair" })),
+                    React.createElement("circle", { cx: "880", cy: "340", r: "26", className: "table" }),
+                    React.createElement("circle", { cx: "842", cy: "340", r: "10", className: "chair" }),
+                    React.createElement("circle", { cx: "918", cy: "340", r: "10", className: "chair" }),
+                    React.createElement("rect", { x: "372", y: "478", width: "200", height: "56", rx: "20", className: "sofa" }),
+                    React.createElement("rect", { x: "388", y: "540", width: "168", height: "34", rx: "12", className: "table" }),
+                    React.createElement("rect", { x: "620", y: "470", width: "150", height: "100", rx: "50", className: "rug" }),
+                    React.createElement("circle", { cx: "695", cy: "520", r: "22", className: "table" }),
+                    React.createElement("rect", { x: "820", y: "456", width: "140", height: "40", rx: "10", className: "counter" }),
+                    React.createElement("rect", { x: "820", y: "504", width: "40", height: "76", rx: "10", className: "counter" }),
+                    React.createElement("text", { x: "890", y: "481", textAnchor: "middle", className: "room-note" }, "Coffee"),
+                    React.createElement("g", { className: "wb", transform: "translate(22 0)" },
+                        React.createElement("rect", { x: "600", y: "262", width: "128", height: "92", rx: "8" }),
+                        React.createElement("text", { x: "614", y: "286" }, "payments flow"),
+                        React.createElement("path", { d: "M614 304h22v14h-22zM646 304h26v14h-26zM682 304h22v14h-22zM636 311h10M672 311h10M620 334h88M620 344h70" })),
+                    React.createElement(Plant, { x: 300, y: 196 }),
+                    React.createElement(Plant, { x: 748, y: 44, r: 14 }),
+                    React.createElement(Plant, { x: 352, y: 384, r: 10 }),
+                    React.createElement(Plant, { x: 958, y: 580, r: 14 }),
+                    React.createElement(Plant, { x: 300, y: 580, r: 10 }),
+                    React.createElement(Plant, { x: 42, y: 384, r: 10 }),
+                    seats.map((s) => React.createElement(Seat, { key: s.id, id: s.id, selected: sel === s.id, onSelect: () => s.id !== "me" && setSel(s.id) })))),
+            React.createElement("aside", { className: "panel profile" },
+                React.createElement(Avatar, { p: p, size: 88 }),
+                React.createElement("h2", null, p.name),
+                React.createElement("small", null, p.role),
+                p.presence !== "left" && React.createElement("span", { className: `online online--${p.presence}` },
+                    React.createElement("i", null),
+                    p.presence === "online" ? "Online" : "Away",
+                    " \u00B7 ",
+                    p.tz),
+                React.createElement("blockquote", null,
+                    "\u201C",
+                    p.fromJohn,
+                    "\u201D",
+                    React.createElement("cite", null, "John")),
+                knows.length > 0 && React.createElement("div", { className: "tags" }, knows.map((k) => React.createElement("span", { key: k }, k))),
+                p.presence !== "left" && React.createElement("a", { className: "teams", href: "https://teams.microsoft.com/l/chat/0/0", target: "_blank", rel: "noreferrer" },
+                    React.createElement(TeamsLogo, null),
+                    " Chat on Teams")))));
+}
+function AdviceScreen() {
+    const { pendingQ, clearQ, repoId } = useApp();
+    const [turns, setTurns] = useState([]);
+    const [q, setQ] = useState("");
+    const thread = useRef(null);
+    const busy = turns.some((t) => !t.a);
+    const ask = (v) => {
+        if (!v.trim() || busy)
+            return;
+        setTurns((t) => [...t, { q: v }]);
+        setQ("");
+        window.setTimeout(() => setTurns((t) => t.map((x) => (x.a ? x : { ...x, a: answer(v, repoId) }))), 650);
+    };
+    useEffect(() => { if (pendingQ) {
+        ask(pendingQ);
+        clearQ();
+    } }, [pendingQ]);
+    useEffect(() => { const el = thread.current; if (el)
+        el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }); }, [turns]);
+    const starters = [
+        { q: "Can I change the retry logic?", d: "The rule John cared about most" },
+        { q: "What should my first commit be?", d: "A safe place to start" },
+        { q: "Which repo is riskiest?", d: "Where only John knew the code" },
+        { q: "Why does the geo rule exclude Canada?", d: "Something John didn’t know" },
+    ];
+    return (React.createElement("div", { className: "screen advice" },
+        React.createElement("section", { className: "convo" },
+            turns.length === 0 ? (React.createElement("div", { className: "intro" },
+                React.createElement("span", { className: "intro-photo" },
+                    React.createElement(Photo, { alt: "John Carter" })),
+                React.createElement("h1", null, "Ask John anything"),
+                React.createElement("p", null,
+                    "I sat down with John for ",
+                    interview.minutes,
+                    " minutes before he left. I\u2019ll tell you what he said, and I\u2019ll tell you when he didn\u2019t know."),
+                React.createElement("div", { className: "starters" }, starters.map((s) => React.createElement("button", { key: s.q, onClick: () => ask(s.q) },
+                    React.createElement("strong", null, s.q),
+                    React.createElement("small", null, s.d)))))) : (React.createElement("div", { className: "thread", ref: thread, "aria-live": "polite" }, turns.map((t, i) => (React.createElement("div", { key: i, className: "turn" },
+                React.createElement("div", { className: "bubble bubble--me" },
+                    React.createElement("p", null, t.q)),
+                t.a ? React.createElement(AnswerBubble, { a: t.a }) : React.createElement("div", { className: "typing" },
+                    React.createElement("i", null),
+                    React.createElement("i", null),
+                    React.createElement("i", null)),
+                t.a && i === turns.length - 1 && t.a.follow.length > 0 && (React.createElement("div", { className: "follow" }, t.a.follow.slice(0, 2).map((f) => React.createElement("button", { key: f, onClick: () => ask(f) }, f))))))))),
+            React.createElement("form", { className: "ask-bar ask-bar--lg", onSubmit: (e) => { e.preventDefault(); ask(q); } },
+                React.createElement("label", { className: "sr-only", htmlFor: "advice-ask" }, "Ask John"),
+                React.createElement("input", { id: "advice-ask", value: q, onChange: (e) => setQ(e.target.value), placeholder: "Ask anything about John\u2019s work\u2026" }),
+                React.createElement("button", { type: "submit", "aria-label": "Ask", disabled: !q.trim() || busy },
+                    React.createElement(Icon, { name: "arrow", size: 18 }))))));
+}
+const _people = people;
+// ─── Up next: a gentle linear path through John's world ────────────────
+const path = [
+    { v: "home", title: "", line: "" },
+    { v: "repo", title: "John’s architecture", line: "See how the services connect and what he’d tell you about each." },
+    { v: "docs", title: "John’s notes", line: "The decisions behind the code, and his exit interview." },
+    { v: "tools", title: "John’s tools", line: "What he used every day, with one tip for each." },
+    { v: "team", title: "The team", line: "Who to ask now that John is gone." },
+    { v: "first", title: "Your first commit", line: "Pick a ticket and ship it with the agent’s help." },
+];
+function UpNext({ view, compact = false }) {
+    const { go } = useApp();
+    const i = path.findIndex((p) => p.v === view);
+    const next = path[i + 1];
+    if (i < 0 || !next)
+        return null;
+    if (compact)
+        return (React.createElement("button", { className: "upnext upnext--compact", onClick: () => go(next.v) },
+            React.createElement("span", { className: "upnext-text" },
+                React.createElement("small", null, "Up next"),
+                React.createElement("strong", null, next.title)),
+            React.createElement("span", { className: "upnext-go" },
+                React.createElement(Icon, { name: "arrow", size: 18 }))));
+    return (React.createElement("div", { className: "upnext-wrap" },
+        React.createElement("button", { className: "upnext", onClick: () => go(next.v) },
+            React.createElement("span", { className: "upnext-steps", "aria-hidden": "true" }, path.slice(1).map((p, k) => React.createElement("i", { key: p.v, className: k + 1 <= i ? "done" : k + 1 === i + 1 ? "here" : "" }))),
+            React.createElement("span", { className: "upnext-text" },
+                React.createElement("small", null, "Up next"),
+                React.createElement("strong", null, next.title),
+                React.createElement("span", null, next.line)),
+            React.createElement("span", { className: "upnext-go" },
+                React.createElement(Icon, { name: "arrow", size: 20 })))));
+}
+const pickups = {
+    notification: [
+        { key: "NTF-219", title: "Add structured log fields to the webhook handler", size: "½ day", risk: "Low", mentor: "prateek", start: true, files: ["src/webhooks/handler.ts", "src/webhooks/handler.test.ts"], why: "Well tested, green quality gate, and you’ll learn the payment.status event everyone uses.", tip: "Log the idempotency key and event id. Those are the two fields everyone searches for in an incident." },
+        { key: "NTF-224", title: "SMS receipt copy for refunds", size: "½ day", risk: "Low", mentor: "prateek", files: ["src/templates/receipt.ts"], why: "Pure template change with snapshot tests.", tip: "Run the snapshot update, then read the diff by eye. Twice." },
+    ],
+    payments: [
+        { key: "PAY-331", title: "Finish the Python 3.12 upgrade", size: "1–2 days", risk: "Medium", mentor: "maya", files: ["pyproject.toml", "Dockerfile", ".github/workflows/ci.yml"], why: "John’s branch is 90% done. Only the asyncpg pin blocked it.", tip: "Rebase onto main first. It’s 22 commits behind." },
+        { key: "PAY-335", title: "Add a test for the duplicate-webhook guard", size: "1 day", risk: "Low", mentor: "maya", start: true, files: ["payments/webhooks/consumer.py", "tests/test_consumer.py"], why: "SonarQube flags this guard as untested. A test makes the riskiest path safer.", tip: "Send the same event id twice and assert one capture. That’s the whole bug from March." },
+    ],
+    fraud: [
+        { key: "FRD-174", title: "Write tests for the rule eval sandbox", size: "1 day", risk: "Medium", mentor: "ava", files: ["rules/engine.py", "tests/test_engine_sandbox.py"], why: "Closes two security findings. The fix exists, it only needs tests.", tip: "The YAML fixtures in tests/fixtures cover every rule type." },
+    ],
+    ledger: [
+        { key: "LDG-90", title: "Document the event replay script", size: "½ day", risk: "Low", mentor: "zhuoning", start: true, files: ["scripts/replay.kt", "docs/runbook.md"], why: "Nobody wrote this down. You’ll learn the ledger flow by explaining it.", tip: "Ask Zhuoning to run it once with you. Write while she talks." },
+    ],
+    api: [
+        { key: "PLAT-104", title: "Add the refunds route to the header allowlist", size: "2 hours", risk: "Low", mentor: "alex", start: true, files: ["routes/payments.go", "routes/allowlist.yaml"], why: "A one-line fix with a big effect: idempotency keys stop getting dropped.", tip: "If you add a payments route, add it to the allowlist. I forgot once." },
+    ],
+    recon: [
+        { key: "REC-47", title: "Handle KRW in the amount rounding", size: "1 day", risk: "Medium", mentor: "zhuoning", files: ["matching/fuzzy_match.py", "tests/test_currency.py"], why: "Same trap as the JPY incident, for another zero-decimal currency.", tip: "Zero-decimal currencies. Always test JPY and KRW together." },
+    ],
+};
+const order = ["notification", "api", "payments", "ledger", "fraud", "recon"];
+function guide(t, repoId, q) {
+    const m = person(t.mentor);
+    const lower = q.toLowerCase();
+    if (lower.includes("start"))
+        return { basis: "code", text: `Open ${t.files[0]} first and read it top to bottom before changing anything. Then make a branch called feat/${t.key.toLowerCase()} and change one thing at a time.`, sources: [], follow: ["What could break?", "Who reviews this?"] };
+    if (lower.includes("break") || lower.includes("risk"))
+        return { basis: "john", text: `${t.tip} ${r.sonar.gate === "Passed" ? `${r.name} has a passing quality gate, so the tests will catch most mistakes.` : `${r.name} has a failing quality gate, so add a test with your change or it won’t merge.`}`, sources: [], follow: ["Who reviews this?", "Where do I start?"] };
+    if (lower.includes("review") || lower.includes("who"))
+        return { basis: "code", text: `${m.name} will review it. ${m.fromJohn}`, sources: [], route: t.mentor, follow: ["Where do I start?"] };
+    if (lower.includes("why"))
+        return { basis: "code", text: t.why, sources: [], follow: ["Where do I start?", "What could break?"] };
+    return answer(q, repoId);
+}
+function FirstCommitScreen() {
+    var _a, _b, _c, _d;
+    const [repoId, setRepoId] = useState("notification");
+    const [pick, setPick] = useState(null);
+    const [done, setDone] = useState({});
+    const [chat, setChat] = useState(null);
+    const [q, setQ] = useState("");
+    const list = (_a = pickups[repoId]) !== null && _a !== void 0 ? _a : [];
+    useEffect(() => { setPick(null); setChat(null); }, [repoId]);
+    useEffect(() => { setDone({}); setChat(null); }, [pick === null || pick === void 0 ? void 0 : pick.key]);
+    const steps = pick ? [
+        { id: "read", label: `Read ${pick.files[0].split("/").pop()}`, help: `Open ${pick.files[0]} and read it top to bottom before you change anything.` },
+        { id: "branch", label: "Create your branch", help: "Run this in the repo:", cmd: `git switch -c feat/${pick.key.toLowerCase()}` },
+        { id: "change", label: "Make the change", help: `Keep it small. You should only need to touch ${pick.files.map((f) => f.split("/").pop()).join(" and ")}.` },
+        { id: "test", label: "Add or update a test", help: pick.tip },
+        { id: "pr", label: `Open a PR for ${person(pick.mentor).name.split(" ")[0]}`, help: `${person(pick.mentor).name} will review it. Link ${pick.key} in the description.` },
+    ] : [];
+    const current = (_b = steps.find((st) => !done[st.id])) === null || _b === void 0 ? void 0 : _b.id;
+    const count = steps.filter((s) => done[s.id]).length;
+    const jira = done.pr ? "In review" : count > 0 ? "In progress" : "To do";
+    const ask = (text) => { if (pick && text.trim()) {
+        setChat({ q: text, a: guide(pick, repoId, text) });
+        setQ("");
+    } };
+    return (React.createElement("div", { className: "screen first" },
+        React.createElement("header", { className: "title" },
+            React.createElement("h1", null, "Your first commit"),
+            React.createElement("p", null, pick ? "Follow the plan. Ask the agent anything along the way." : "Pick a repo, then a ticket. John’s agent will guide you from there.")),
+        React.createElement("div", { className: "chips-row", role: "tablist", "aria-label": "Repositories" }, order.map((id) => (React.createElement("button", { key: id, role: "tab", "aria-selected": id === repoId, className: id === repoId ? "active" : "", onClick: () => setRepoId(id) },
+            React.createElement("i", { className: `sdot sdot--${statusKey(repo(id).status)}` }),
+            repo(id).name.replace(/-(service|engine)$/, ""))))),
+        React.createElement("div", { className: `first-grid ${pick ? "has-pick" : ""}` },
+            React.createElement("div", { className: "list-col" },
+                React.createElement("div", { className: "list-head" },
+                    React.createElement("span", null, "Ready to pick up"),
+                    React.createElement("span", { className: "source" },
+                        React.createElement("i", { className: "src-dot src-dot--jira" }),
+                        "Jira \u00B7 ", (_d = (_c = list[0]) === null || _c === void 0 ? void 0 : _c.key.split("-")[0]) !== null && _d !== void 0 ? _d : "PAY",
+                        " board \u00B7 synced just now")),
+                React.createElement("ul", { className: "pick-list" }, list.map((t) => (React.createElement("li", { key: t.key },
+                    React.createElement("button", { className: `pick ${(pick === null || pick === void 0 ? void 0 : pick.key) === t.key ? "is-picked" : ""}`, onClick: () => setPick((pick === null || pick === void 0 ? void 0 : pick.key) === t.key ? null : t) },
+                        React.createElement("span", { className: "pick-main" },
+                            React.createElement("strong", null, t.title),
+                            React.createElement("span", { className: "pick-meta" },
+                                React.createElement("span", { className: "tkey" }, t.key),
+                                "\u00B7",
+                                React.createElement("span", { className: `risk risk--${t.risk.toLowerCase()}` },
+                                    t.risk,
+                                    " risk"),
+                                "\u00B7",
+                                React.createElement("span", null, t.size),
+                                t.start && React.createElement("span", { className: "good" }, "Good first ticket"))),
+                        React.createElement(Avatar, { id: t.mentor, size: 32 }),
+                        React.createElement("span", { className: "pick-go" }, (pick === null || pick === void 0 ? void 0 : pick.key) === t.key ? React.createElement(Icon, { name: "check", size: 16 }) : React.createElement(Icon, { name: "arrow", size: 16 })))))))),
+            pick && (React.createElement("aside", { className: "panel guide", "aria-live": "polite" },
+                React.createElement("header", { className: "guide-head" },
+                    React.createElement("span", { className: "agent-mark", "aria-hidden": "true" },
+                        React.createElement("i", null),
+                        React.createElement("i", null),
+                        React.createElement("i", null)),
+                    React.createElement("div", null,
+                        React.createElement("strong", null, pick.title),
+                        React.createElement("small", null, pick.why))),
+                React.createElement("div", { className: "jira-line" },
+                    React.createElement("span", { className: "tkey" }, pick.key),
+                    React.createElement("span", { className: `jstatus jstatus--${jira.replace(" ", "").toLowerCase()}` }, jira),
+                    React.createElement("span", { className: "assignee" },
+                        React.createElement(Avatar, { id: "me", size: 22 }),
+                        "You"),
+                    React.createElement("a", { className: "jira-open", href: "https://www.atlassian.com/software/jira", target: "_blank", rel: "noreferrer" },
+                        "Jira ",
+                        React.createElement(Icon, { name: "ext", size: 13 }))),
+                React.createElement("div", { className: "gprogress", "aria-label": `${count} of ${steps.length} steps done` },
+                    React.createElement("i", { style: { width: `${(count / steps.length) * 100}%` } })),
+                React.createElement("ol", { className: "guide-steps" }, steps.map((st, i) => (React.createElement("li", { key: st.id, className: `${done[st.id] ? "done" : ""} ${st.id === current ? "now" : ""}` },
+                    React.createElement("label", null,
+                        React.createElement("input", { type: "checkbox", id: `gs-${st.id}`, checked: !!done[st.id], onChange: () => setDone({ ...done, [st.id]: !done[st.id] }) }),
+                        React.createElement("span", { className: "gbox" }, done[st.id] ? React.createElement(Icon, { name: "check", size: 12 }) : i + 1),
+                        React.createElement("span", null, st.label)),
+                    st.id === current && (React.createElement("div", { className: "step-help" },
+                        React.createElement("p", null, st.help),
+                        st.cmd && React.createElement(CopyLine, { cmd: st.cmd }),
+                        React.createElement("button", { className: "step-done", onClick: () => setDone({ ...done, [st.id]: true }) },
+                            "Done ",
+                            React.createElement(Icon, { name: "check", size: 14 })))))))),
+                count === steps.length ? (React.createElement("div", { className: "stamp" },
+                    React.createElement("span", null, "First commit"),
+                    React.createElement("small", null, "Signed, John"))) : chat ? (React.createElement("div", { className: "guide-chat" },
+                    React.createElement("div", { className: "bubble bubble--me" },
+                        React.createElement("p", null, chat.q)),
+                    React.createElement(AnswerBubble, { a: chat.a }))) : null,
+                React.createElement("div", { className: "guide-qs" }, ((chat === null || chat === void 0 ? void 0 : chat.a.follow.length) ? chat.a.follow : ["Where do I start?", "What could break?", "Who reviews this?"]).slice(0, 3).map((x) => React.createElement("button", { key: x, onClick: () => ask(x) }, x))),
+                React.createElement("form", { className: "ask-bar", onSubmit: (e) => { e.preventDefault(); ask(q); } },
+                    React.createElement("label", { className: "sr-only", htmlFor: "guide-ask" }, "Ask about this ticket"),
+                    React.createElement("input", { id: "guide-ask", value: q, onChange: (e) => setQ(e.target.value), placeholder: "Ask about this ticket\u2026" }),
+                    React.createElement("button", { type: "submit", "aria-label": "Ask", disabled: !q.trim() },
+                        React.createElement(Icon, { name: "arrow", size: 18 }))))))));
+}
+// ---- App.tsx
+const nav = [
+    { id: "home", label: "Home", icon: "home" },
+    { id: "repo", label: "Repositories", icon: "code" },
+    { id: "docs", label: "Notes", icon: "note" },
+    { id: "tools", label: "Tools", icon: "tool" },
+    { id: "team", label: "Team", icon: "team" },
+    { id: "first", label: "First commit", icon: "flag" },
+    { id: "ask", label: "Advice", icon: "bulb" },
+];
+function Welcome({ enter }) {
+    const [broken, setBroken] = useState(false);
+    const shortcuts = [
+        { label: "His work", v: "repo", icon: "code", tint: "mint" },
+        { label: "His notes", v: "docs", icon: "note", tint: "blue" },
+        { label: "His tools", v: "tools", icon: "tool", tint: "violet" },
+        { label: "His team", v: "team", icon: "team", tint: "rose" },
+        { label: "His advice", v: "ask", icon: "bulb", tint: "yellow" },
+    ];
+    return (React.createElement("main", { className: "welcome" },
+        React.createElement("div", { className: "welcome-photo", "aria-hidden": "true" },
+            !broken ? React.createElement("img", { src: JOHN_PHOTO, alt: "", onError: () => setBroken(true) }) : React.createElement("span", { className: "photo-fallback" }),
+            React.createElement("span", { className: "wall-note" },
+                "Build",
+                React.createElement("br", null),
+                "Solve",
+                React.createElement("br", null),
+                "Iterate",
+                React.createElement("br", null),
+                React.createElement("em", null, "\u2013 John"))),
+        React.createElement("header", { className: "welcome-top" },
+            React.createElement("div", { className: "brand" },
+                React.createElement("span", { className: "logo-mark", "aria-hidden": "true" },
+                    React.createElement("i", null),
+                    React.createElement("i", null),
+                    React.createElement("i", null),
+                    React.createElement("i", null)),
+                React.createElement("div", null,
+                    React.createElement("span", { className: "brand-word" },
+                        "Last",
+                        React.createElement("br", null),
+                        "Commit"),
+                    React.createElement("p", null, "They leave. Their world of work stays.")))),
+        React.createElement("section", { className: "welcome-card" },
+            React.createElement("h1", null,
+                "Welcome to",
+                React.createElement("br", null),
+                React.createElement("span", { className: "nowrap" },
+                    React.createElement("em", null, "John\u2019s World"),
+                    " ",
+                    React.createElement("span", { className: "wave", "aria-hidden": "true" }, "\uD83D\uDC4B"))),
+            React.createElement("p", null, "Explore John\u2019s work, notes, tools and advice to get up to speed."),
+            React.createElement("div", { className: "shortcuts" }, shortcuts.map((s) => (React.createElement("button", { key: s.label, onClick: () => enter(s.v) },
+                React.createElement("span", { className: `sc-icon tint--${s.tint}` },
+                    React.createElement(Icon, { name: s.icon, size: 26 })),
+                React.createElement("span", null, s.label))))),
+            React.createElement("button", { className: "enter", onClick: () => enter("home") },
+                "Enter John\u2019s World ",
+                React.createElement(Icon, { name: "arrow", size: 22 })))));
+}
+function Shell({ start }) {
+    const [view, setView] = useState(start);
+    const [repoId, setRepoId] = useState("payments");
+    const [tab, setTab] = useState("architecture");
+    const [docId, setDocId] = useState("");
+    const [personId, setPersonId] = useState("");
+    const [pendingQ, setPendingQ] = useState("");
+    const [toastMsg, setToastMsg] = useState("");
+    const [search, setSearch] = useState("");
+    const go = (v0, o = {}) => {
+        var _a, _b, _c;
+        const v = v0 === "codebase" ? "repo" : v0;
+        setView(v);
+        if (o.repo)
+            setRepoId(o.repo);
+        if (v === "repo")
+            setTab((_a = o.tab) !== null && _a !== void 0 ? _a : "architecture");
+        setDocId((_b = o.doc) !== null && _b !== void 0 ? _b : "");
+        setPersonId((_c = o.person) !== null && _c !== void 0 ? _c : "");
+        if (o.q)
+            setPendingQ(o.q);
+        window.scrollTo({ top: 0 });
+    };
+    const toast = (m) => { setToastMsg(m); window.setTimeout(() => setToastMsg(""), 2400); };
+    const ctx = { view, go, repoId, tab, docId, personId, pendingQ, clearQ: () => setPendingQ(""), visited: new Set(), toast };
+    return (React.createElement(AppCtx.Provider, { value: ctx },
+        React.createElement("div", { className: "shell" },
+            React.createElement("aside", { className: "side" },
+                React.createElement(Logo, { compact: true }),
+                React.createElement("nav", { "aria-label": "Primary" }, nav.map((n) => (React.createElement("button", { key: n.id, className: view === n.id ? "active" : "", "aria-current": view === n.id ? "page" : undefined, onClick: () => go(n.id) },
+                    React.createElement(Icon, { name: n.icon, size: 22 }),
+                    React.createElement("span", null, n.label)))))),
+            React.createElement("div", { className: "main" },
+                React.createElement("header", { className: "top" },
+                    React.createElement("form", { className: "search", onSubmit: (e) => { e.preventDefault(); if (search.trim()) {
+                            go("ask", { q: search.trim() });
+                            setSearch("");
+                        } } },
+                        React.createElement(Icon, { name: "search", size: 18 }),
+                        React.createElement("label", { className: "sr-only", htmlFor: "search" }, "Search"),
+                        React.createElement("input", { id: "search", value: search, onChange: (e) => setSearch(e.target.value), placeholder: "Search John\u2019s work, notes, tools, team\u2026" })),
+                    React.createElement("button", { className: "me", "aria-label": "Your profile" },
+                        React.createElement(Avatar, { id: "me", size: 40 }),
+                        React.createElement("span", null, "New Joiner"),
+                        React.createElement(Icon, { name: "chevron", size: 18 }))),
+                view === "home" && React.createElement(HomeScreen, null),
+                view === "repo" && React.createElement(RepoScreen, null),
+                view === "docs" && React.createElement(NotesScreen, null),
+                view === "tools" && React.createElement(ToolsScreen, null),
+                view === "team" && React.createElement(TeamScreen, null),
+                view === "first" && React.createElement(FirstCommitScreen, null),
+                view === "ask" && React.createElement(AdviceScreen, null),
+                view !== "home" && React.createElement(UpNext, { view: view })),
+            toastMsg && React.createElement("div", { className: "toast", role: "status" }, toastMsg))));
+}
+function App() {
+    const [start, setStart] = useState(null);
+    return start ? React.createElement(Shell, { start: start }) : React.createElement(Welcome, { enter: setStart });
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+
+</body>
+</html>

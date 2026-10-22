@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { JOHN_PHOTO, docs, interview, people, person, repo, repos } from "./data"
+import { JOHN_PHOTO, access, docs, interview, people, person, repo, repos, setupCommands } from "./data"
 import type { Repo, Status, Tone, View } from "./data"
 import { answer, AnswerBubble, Avatar, Icon, TeamsLogo, statusKey, useApp } from "./ui"
 import type { Answer } from "./ui"
@@ -464,9 +464,52 @@ const tools: { name: string; kind: string; tip: string; tint: Tone; mono: string
 ]
 const ship = ["Branch", "Pull request", "Quality gate", "Staging", "Production"]
 export function ToolsScreen() {
+  const { toast } = useApp()
+  const downloadAll = () => {
+    const lines = [
+      "# John’s tools — setup kit",
+      "",
+      "Everything John used every day, with one tip for each.",
+      "",
+      "## Tools",
+      "",
+      ...tools.map((t) => `- **${t.name}** (${t.kind}): ${t.tip}`),
+      "",
+      "## Get access first",
+      "",
+      ...access.map((a) => `- [ ] ${a.name} — ${a.why} (approver: ${person(a.approver).name}, ${a.eta})`),
+      "",
+      "## Run payments-service locally",
+      "",
+      "```bash",
+      ...setupCommands.flatMap((c) => [`# ${c.label}`, c.cmd]),
+      "```",
+      "",
+      "## How code ships",
+      "",
+      ship.map((x, i) => `${i + 1}. ${x}`).join("\n"),
+      "",
+    ]
+    try {
+      const url = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/markdown" }))
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "johns-tools-setup.md"
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+      toast("Downloaded johns-tools-setup.md")
+    } catch {
+      toast("Download isn’t available here")
+    }
+  }
   return (
     <div className="screen narrow">
-      <header className="title"><h1>John’s Tools</h1><p>The eight tools he used every day, and one tip for each.</p></header>
+      <header className="title title--row">
+        <div><h1>John’s Tools</h1><p>The eight tools he used every day, and one tip for each.</p></div>
+        <button className="download" onClick={downloadAll}><Icon name="download" size={18} />Download all</button>
+      </header>
       <div className="tools">
         {tools.map((t) => (
           <article key={t.name} className="panel tool">

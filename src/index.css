@@ -648,3 +648,9 @@
 .assignee { display: inline-flex; align-items: center; gap: 6px; }
 .jira-open { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: #2453a3; font-weight: 600; }
 .jira-open:hover { text-decoration: underline; }
+
+/* tools — download all */
+.title--row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.title--row > div { display: grid; gap: 8px; }
+.download { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 15px; font-weight: 500; transition: background .2s, transform .2s; }
+.download:hover { background: #0a0e12; transform: translateY(-1px); }

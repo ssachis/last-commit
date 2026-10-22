@@ -53,6 +53,7 @@ const P: Record<string, ReactNode> = {
   plug: <><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0zM12 17v5" /></>,
   sonar: <><path d="M3 12a9 9 0 0 1 9-9M6.5 12A5.5 5.5 0 0 1 12 6.5" /><circle cx="12" cy="12" r="2" /><path d="M14 14l6 6" /></>,
   lock: <><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></>,
+  download: <><path d="M12 4v11M7 10l5 5 5-5" /><path d="M5 20h14" /></>,
   sparkle: <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" />,
 }
 

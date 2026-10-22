@@ -660,6 +660,12 @@
 .assignee { display: inline-flex; align-items: center; gap: 6px; }
 .jira-open { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: #2453a3; font-weight: 600; }
 .jira-open:hover { text-decoration: underline; }
+
+/* tools — download all */
+.title--row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.title--row > div { display: grid; gap: 8px; }
+.download { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 15px; font-weight: 500; transition: background .2s, transform .2s; }
+.download:hover { background: #0a0e12; transform: translateY(-1px); }
 </style>
 <div id="root"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
@@ -1455,6 +1461,9 @@ const P = {
     lock: React.createElement(React.Fragment, null,
         React.createElement("rect", { x: "4", y: "10", width: "16", height: "11", rx: "2" }),
         React.createElement("path", { d: "M8 10V7a4 4 0 0 1 8 0v3" })),
+    download: React.createElement(React.Fragment, null,
+        React.createElement("path", { d: "M12 4v11M7 10l5 5 5-5" }),
+        React.createElement("path", { d: "M5 20h14" })),
     sparkle: React.createElement("path", { d: "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" }),
 };
 function Icon({ name, size = 20, className = "" }) {
@@ -2180,10 +2189,55 @@ const tools = [
 ];
 const ship = ["Branch", "Pull request", "Quality gate", "Staging", "Production"];
 function ToolsScreen() {
+    const { toast } = useApp();
+    const downloadAll = () => {
+        const lines = [
+            "# John’s tools — setup kit",
+            "",
+            "Everything John used every day, with one tip for each.",
+            "",
+            "## Tools",
+            "",
+            ...tools.map((t) => `- **${t.name}** (${t.kind}): ${t.tip}`),
+            "",
+            "## Get access first",
+            "",
+            ...access.map((a) => `- [ ] ${a.name} — ${a.why} (approver: ${person(a.approver).name}, ${a.eta})`),
+            "",
+            "## Run payments-service locally",
+            "",
+            "```bash",
+            ...setupCommands.flatMap((c) => [`# ${c.label}`, c.cmd]),
+            "```",
+            "",
+            "## How code ships",
+            "",
+            ship.map((x, i) => `${i + 1}. ${x}`).join("\n"),
+            "",
+        ];
+        try {
+            const url = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/markdown" }));
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "johns-tools-setup.md";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+            toast("Downloaded johns-tools-setup.md");
+        }
+        catch {
+            toast("Download isn’t available here");
+        }
+    };
     return (React.createElement("div", { className: "screen narrow" },
-        React.createElement("header", { className: "title" },
-            React.createElement("h1", null, "John\u2019s Tools"),
-            React.createElement("p", null, "The eight tools he used every day, and one tip for each.")),
+        React.createElement("header", { className: "title title--row" },
+            React.createElement("div", null,
+                React.createElement("h1", null, "John\u2019s Tools"),
+                React.createElement("p", null, "The eight tools he used every day, and one tip for each.")),
+            React.createElement("button", { className: "download", onClick: downloadAll },
+                React.createElement(Icon, { name: "download", size: 18 }),
+                "Download all")),
         React.createElement("div", { className: "tools" }, tools.map((t) => (React.createElement("article", { key: t.name, className: "panel tool" },
             React.createElement("span", { className: `tool-mark tint--${t.tint}`, "aria-hidden": "true" }, t.mono),
             React.createElement("h2", null, t.name),

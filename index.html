@@ -4,7 +4,7 @@
     <!-- figma:head-start -->
     <script>
       /* On GitHub Pages, serve the prebuilt site in docs/ (this file is the Vite dev shell). */
-      if (location.hostname.endsWith("github.io") && !location.pathname.includes("/docs/")) location.replace(location.pathname.replace(/\/?$/, "/") + "docs/")
+      if (location.hostname.endsWith("github.io") && !location.pathname.includes("/docs/")) location.replace(location.pathname.replace(/index\.html$/, "").replace(/\/?$/, "/") + "docs/")
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

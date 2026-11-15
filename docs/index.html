@@ -7,6 +7,7 @@
 </head>
 <body>
 <title>Last Commit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M8 32h26%27 stroke=%27%23151b21%27 stroke-width=%275%27 stroke-linecap=%27round%27/%3E%3Ccircle cx=%278%27 cy=%2732%27 r=%277%27 fill=%27%23d65a50%27/%3E%3Ccircle cx=%2724%27 cy=%2732%27 r=%277%27 fill=%27%23e6ad48%27/%3E%3Ccircle cx=%2747%27 cy=%2732%27 r=%2711.5%27 fill=%27none%27 stroke=%27%23538f4e%27 stroke-width=%276%27/%3E%3C/svg%3E">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
@@ -64,15 +65,15 @@
 /* logo */
 .logo { display: flex; align-items: center; gap: 16px; font-size: 40px; font-weight: 800; line-height: .95; letter-spacing: -.04em; color: var(--ink); }
 .logo--compact { gap: 6px; font-size: 22px; }
-.logo-mark { width: 52px; height: 76px; position: relative; display: block; flex: 0 0 auto; }
-.logo--compact .logo-mark { transform: scale(.58); transform-origin: left top; margin: 0 -20px -32px 0; }
-.logo-mark::before { content: ""; position: absolute; left: 24px; top: 10px; width: 3px; height: 58px; background: #151b21; transform: rotate(-6deg); border-radius: 3px; }
-.logo-mark::after { content: ""; position: absolute; left: 5px; top: 14px; width: 22px; height: 3px; background: #151b21; transform: rotate(-15deg); border-radius: 3px; }
-.logo-mark i { position: absolute; width: 25px; height: 25px; border: 3px solid #151b21; border-radius: 50%; z-index: 1; background: #ff5d63; }
-.logo-mark i:nth-child(1) { left: 27px; top: 0; }
-.logo-mark i:nth-child(2) { left: 20px; top: 25px; background: #ffd57e; }
-.logo-mark i:nth-child(3) { left: 22px; top: 51px; background: #67bf8b; }
-.logo-mark i:nth-child(4) { width: 15px; height: 15px; left: 0; top: 10px; background: #379965; border: 0; border-radius: 100% 0 100% 0; transform: rotate(-15deg); }
+.logo-mark { width: 152px; height: 42px; position: relative; display: block; flex: 0 0 auto; }
+.logo--compact .logo-mark { transform: scale(.5); transform-origin: left center; margin: -10.5px -76px -10.5px 0; }
+.logo-mark::before { content: ""; position: absolute; left: 11px; top: 18.5px; width: 102px; height: 5px; background: #151b21; border-radius: 3px; }
+.logo-mark::after { content: none; }
+.logo-mark i { position: absolute; top: 9.5px; width: 23px; height: 23px; border-radius: 50%; z-index: 1; background: #d65a50; }
+.logo-mark i:nth-child(1) { left: 0; }
+.logo-mark i:nth-child(2) { left: 36px; background: #e6ad48; }
+.logo-mark i:nth-child(3) { left: 72px; background: #538f4e; }
+.logo-mark i:nth-child(4) { left: 110px; top: 0; width: 42px; height: 42px; box-sizing: border-box; border: 7px solid #538f4e; background: transparent; }
 
 /* avatars & photos */
 .avatar { position: relative; flex: 0 0 auto; border-radius: 50%; display: inline-grid; place-items: center; font-weight: 700; letter-spacing: -.02em; }
@@ -114,9 +115,10 @@
 /* welcome — fits one screen: brand + card on the left, photo panel bleeding off the right edge */
 .welcome { position: relative; height: 100vh; height: 100dvh; min-height: 680px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 48%) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 32px; padding-block: clamp(28px, 5.5vh, 60px); padding-left: max(16px, env(safe-area-inset-left, 0px), 4.4vw); padding-right: max(16px, env(safe-area-inset-right, 0px), 4.4vw); background: radial-gradient(ellipse at 85% 0%, #f1f2f0 0%, rgba(241, 242, 240, 0) 55%), linear-gradient(180deg, #fbfbfa, #ffffff); }
 .welcome-top { grid-column: 1; position: relative; z-index: 2; }
-.brand { display: flex; align-items: flex-start; gap: 18px; }
-.brand-word { display: block; font-size: clamp(28px, min(3vw, 4.6vh), 44px); font-weight: 800; line-height: .98; letter-spacing: -.04em; color: var(--ink); margin-top: 8px; }
-.brand p { margin-top: 10px; font-size: clamp(14px, min(1.25vw, 2vh), 18px); color: var(--grey); }
+.brand { display: grid; grid-template-columns: auto auto; justify-content: start; align-items: center; column-gap: 26px; }
+.brand > div { display: contents; }
+.brand-word { display: block; font-size: clamp(28px, min(3vw, 4.6vh), 44px); font-weight: 800; line-height: 1; letter-spacing: -.04em; color: var(--ink); white-space: nowrap; }
+.brand p { grid-column: 1 / -1; margin-top: 14px; font-size: clamp(14px, min(1.25vw, 2vh), 18px); color: var(--grey); }
 .welcome-photo { position: relative; grid-column: 2; grid-row: 2; align-self: center; justify-self: end; margin-top: 2vh; width: min(100%, 640px); max-height: 66vh; aspect-ratio: 5 / 6; border-radius: 28px; overflow: hidden; background: linear-gradient(135deg, #eef3ef, #f5f6f8); box-shadow: 0 30px 70px rgba(20, 26, 33, .08); }
 .welcome-photo img, .welcome-photo .photo-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% 25%; }
 .welcome-photo .photo-fallback { background: radial-gradient(circle at 55% 40%, #e2efe7, #f4f5f7 65%); }
@@ -152,6 +154,8 @@
   .shortcuts button { font-size: 12px; gap: 8px; }
   .enter { padding: 0 24px; }
   .brand-word { font-size: 28px; }
+  .brand { column-gap: 14px; }
+  .brand .logo-mark { transform: scale(.7); transform-origin: left center; margin: -6px -46px -6px 0; }
   .brand p { display: none; }
 }
 
@@ -449,6 +453,7 @@
   .side { padding: 24px 12px; }
   .side .logo span:last-child, .side nav span { display: none; }
   .side .logo { margin: 0 auto; }
+  .side .logo--compact .logo-mark { transform: scale(.32); margin: -14px -103px -14px 0; }
   .side nav button { justify-content: center; padding: 0; }
   .repo-bottom, .cards3, .incidents, .notes { grid-template-columns: minmax(0, 1fr); }
   .feature { grid-template-columns: minmax(0, 1fr); }
@@ -2616,10 +2621,7 @@ function Welcome({ enter }) {
                     React.createElement("i", null),
                     React.createElement("i", null)),
                 React.createElement("div", null,
-                    React.createElement("span", { className: "brand-word" },
-                        "Last",
-                        React.createElement("br", null),
-                        "Commit"),
+                    React.createElement("span", { className: "brand-word" }, "Last Commit"),
                     React.createElement("p", null, "They leave. Their world of work stays.")))),
         React.createElement("section", { className: "welcome-card" },
             React.createElement("h1", null,

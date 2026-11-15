@@ -35,7 +35,7 @@ function Welcome({ enter }: { enter: (v: View) => void }) {
         <div className="brand">
           <span className="logo-mark" aria-hidden="true"><i /><i /><i /><i /></span>
           <div>
-            <span className="brand-word">Last<br />Commit</span>
+            <span className="brand-word">Last Commit</span>
             <p>They leave. Their world of work stays.</p>
           </div>
         </div>
